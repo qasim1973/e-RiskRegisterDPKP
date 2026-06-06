@@ -1,0 +1,2461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Risk Register DPKP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .print-only { display: none; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background-color: white !important; color: black !important; font-size: 10px; }
+      .print-container { max-width: 100%; padding: 0; margin: 0; box-shadow: none; }
+      table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+      th, td { border: 1px solid black !important; padding: 4px; font-size: 9px; word-wrap: break-word; }
+      th { background-color: #f3f4f6 !important; color: black !important; }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col overflow-hidden">
+
+  <!-- Toast Notification Center -->
+  <div id="toast-container" class="fixed top-4 right-4 z-[9999] space-y-2 pointer-events-none no-print"></div>
+
+  <!-- Main Grid Wrapper with responsive Sidebar layout -->
+  <div class="flex flex-1 h-screen overflow-hidden">
+
+    <!-- SIDEBAR NAVIGATION (Daftar Form Terstruktur) -->
+    <aside id="main-sidebar" class="no-print fixed inset-y-0 left-0 z-50 flex flex-col w-72 bg-slate-950 border-r border-slate-800 transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:relative shrink-0">
+      
+      <!-- Logo & Profile Section in Sidebar -->
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="bg-blue-600 p-2 rounded-xl shadow-lg">
+            <i data-lucide="shield-alert" class="w-6 h-6 text-white"></i>
+          </div>
+          <div>
+            <h1 class="font-extrabold text-sm tracking-tight text-white leading-none">E-RISK REGISTER</h1>
+            <p class="text-[9px] text-blue-400 mt-1">Kertas Kerja DPKP Buol</p>
+          </div>
+        </div>
+        <!-- Close Button Sidebar on Mobile Only -->
+        <button onclick="toggleSidebar(false)" class="md:hidden text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-900">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Links Grouped by Kertas Kerja Categories -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-5">
+        
+        <!-- Category: Beranda -->
+        <div>
+          <span class="px-3 text-[10px] uppercase tracking-wider font-extrabold text-slate-500 block mb-2">Beranda</span>
+          <button onclick="switchTab('dashboard')" id="tab-dashboard" class="w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition-all text-left bg-blue-600 text-white shadow-md">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Peta & Dashboard
+          </button>
+        </div>
+
+        <!-- Category: Penetapan Konteks -->
+        <div>
+          <span class="px-3 text-[10px] uppercase tracking-wider font-extrabold text-slate-500 block mb-2">1. Penetapan Konteks</span>
+          <div class="space-y-1">
+            <button onclick="switchTab('f1a')" id="tab-f1a" class="w-full px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all text-left text-slate-400 hover:bg-slate-900 hover:text-slate-100">
+              <i data-lucide="compass" class="w-3.5 h-3.5"></i> Form 1a: Konteks Strategis
+            </button>
+            <button onclick="switchTab('f1b')" id="tab-f1b" class="w-full px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all text-left text-slate-400 hover:bg-slate-900 hover:text-slate-100">
+              <i data-lucide="file-cog" class="w-3.5 h-3.5"></i> Form 1b: Konteks Operasional
+            </button>
+          </div>
+        </div>
+
+        <!-- Category: Identifikasi Risiko -->
+        <div>
+          <span class="px-3 text-[10px] uppercase tracking-wider font-extrabold text-slate-500 block mb-2">2. Identifikasi Risiko</span>
+          <div class="space-y-1">
+            <button onclick="switchTab('f2a')" id="tab-f2a" class="w-full px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all text-left text-slate-400 hover:bg-slate-900 hover:text-slate-100">
+              <i data-lucide="file-warning" class="w-3.5 h-3.5"></i> Form 2a: Id. Risiko Strategis
+            </button>
+            <button onclick="switchTab('f2b')" id="tab-f2b" class="w-full px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all text-left text-slate-400 hover:bg-slate-900 hover:text-slate-100">
+              <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Form 2b: Id. Risiko Operasional
+            </button>
+          </div>
+        </div>
+
+        <!-- Category: Penilaian Risiko -->
+        <div>
+          <span class="px-3 text-[10px] uppercase tracking-wider font-extrabold text-slate-500 block mb-2">3. Penilaian & Analisis</span>
+          <div class="space-y-1">
+            <button onclick="switchTab('f3a')" id="tab-f3a" class="w-full px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all text-left text-slate-400 hover:bg-slate-900 hover:text-slate-100">
+              <i data-lucide="gauge" class="w-3.5 h-3.5"></i> Form 3a: Pengukuran Inheren
+            </button>
+            <button onclick="switchTab('f3b')" id="tab-f3b" class="w-full px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all text-left text-slate-400 hover:bg-slate-900 hover:text-slate-100">
+              <i data-lucide="activity" class="w-3.5 h-3.5"></i> Form 3b: Pengukuran Residual
+            </button>
+            <button onclick="switchTab('f4')" id="tab-f4" class="w-full px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all text-left text-slate-400 hover:bg-slate-900 hover:text-slate-100">
+              <i data-lucide="check-square" class="w-3.5 h-3.5"></i> Form 4: Evaluasi Pengendalian
+            </button>
+            <button onclick="switchTab('f6')" id="tab-f6" class="w-full px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all text-left text-slate-400 hover:bg-slate-900 hover:text-slate-100">
+              <i data-lucide="shield-plus" class="w-3.5 h-3.5"></i> Form 6: Rencana Tindak (RTP)
+            </button>
+          </div>
+        </div>
+
+        <!-- Category: Pemantauan & Pelaporan -->
+        <div>
+          <span class="px-3 text-[10px] uppercase tracking-wider font-extrabold text-slate-500 block mb-2">4. Pemantauan & Infokom</span>
+          <div class="space-y-1">
+            <button onclick="switchTab('f7')" id="tab-f7" class="w-full px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all text-left text-slate-400 hover:bg-slate-900 hover:text-slate-100">
+              <i data-lucide="info" class="w-3.5 h-3.5"></i> Form 7: Pengkomunikasian
+            </button>
+            <button onclick="switchTab('f8')" id="tab-f8" class="w-full px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all text-left text-slate-400 hover:bg-slate-900 hover:text-slate-100">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Form 8: Pemantauan PI
+            </button>
+            <button onclick="switchTab('f9')" id="tab-f9" class="w-full px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all text-left text-slate-400 hover:bg-slate-900 hover:text-slate-100">
+              <i data-lucide="history" class="w-3.5 h-3.5"></i> Form 9: Kejadian Risiko & RTP
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- MAIN DISPLAY WRAPPER (Workspace) -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+      
+      <!-- TOP ACTION BAR / NAVBAR (Header) -->
+      <header class="bg-slate-950 border-b border-slate-800 px-4 py-3.5 flex items-center justify-between shrink-0 no-print">
+        <!-- Sidebar Toggle on Mobile -->
+        <button onclick="toggleSidebar(true)" class="md:hidden bg-slate-900 text-slate-200 hover:text-white p-2 rounded-xl border border-slate-800 shadow-md">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+
+        <div class="hidden md:block">
+          <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Kertas Kerja Terintegrasi</h2>
+          <p class="text-[10px] text-slate-500 leading-none mt-1">Dinas Pertanian & Ketahanan Pangan (DPKP) Kab. Buol</p>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="loadDatabase()" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-800 transition-all shadow-md">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Sync Data Sheets
+          </button>
+          <button onclick="openAIModal()" class="bg-violet-600 hover:bg-violet-500 text-white px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md shadow-violet-900/20">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Analisis AI (ISO)
+          </button>
+          <button onclick="openExportModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i> Ekspor
+          </button>
+        </div>
+      </header>
+
+      <!-- VIEWPORT CANVAS (Main Workspace Scroll) -->
+      <main class="flex-1 overflow-y-auto p-4 md:p-6 print-container">
+        
+        <!-- === DASHBOARD & PETA RISIKO === -->
+        <section id="sec-dashboard" class="space-y-6">
+          
+          <!-- Top Stats Card Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 no-print">
+            <div class="bg-slate-800 border border-slate-700/60 p-5 rounded-2xl shadow-md">
+              <span class="text-xs text-slate-400 font-semibold block uppercase">Total Risiko</span>
+              <div class="flex items-baseline justify-between mt-2">
+                <span id="stat-total" class="text-3xl font-extrabold text-blue-400">0</span>
+                <i data-lucide="database" class="text-blue-500 w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="bg-slate-800 border border-slate-700/60 p-5 rounded-2xl shadow-md border-l-4 border-l-red-500">
+              <span class="text-xs text-slate-400 font-semibold block uppercase">Risiko Level Tinggi</span>
+              <div class="flex items-baseline justify-between mt-2">
+                <span id="stat-tinggi" class="text-3xl font-extrabold text-red-500">0</span>
+                <i data-lucide="alert-triangle" class="text-red-500 w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="bg-slate-800 border border-slate-700/60 p-5 rounded-2xl shadow-md border-l-4 border-l-yellow-400">
+              <span class="text-xs text-slate-400 font-semibold block uppercase">Risiko Level Sedang</span>
+              <div class="flex items-baseline justify-between mt-2">
+                <span id="stat-sedang" class="text-3xl font-extrabold text-yellow-400">0</span>
+                <i data-lucide="trending-up" class="text-yellow-400 w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="bg-slate-800 border border-slate-700/60 p-5 rounded-2xl shadow-md border-l-4 border-l-green-500">
+              <span class="text-xs text-slate-400 font-semibold block uppercase">Risiko Level Rendah</span>
+              <div class="flex items-baseline justify-between mt-2">
+                <span id="stat-rendah" class="text-3xl font-extrabold text-green-500">0</span>
+                <i data-lucide="check-circle" class="text-green-500 w-5 h-5"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form 5: PETA RISIKO DPKP -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="bg-slate-800 border border-slate-700/60 p-6 rounded-2xl shadow-md lg:col-span-1">
+              <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                  <i data-lucide="grid" class="text-blue-500 w-4 h-4"></i> Peta & Dashboard (5x5)
+                </h3>
+                <select id="peta-view-type" onchange="renderDashboardData()" class="bg-slate-900 border border-slate-700 text-xs text-slate-300 rounded px-2 py-1">
+                  <option value="residual">Residual (Sesudah RTP)</option>
+                  <option value="inheren">Inheren (Sebelum RTP)</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="flex">
+                  <!-- Y-axis (Probabilitas) -->
+                  <div class="flex flex-col justify-between text-right pr-2 font-bold text-xs text-slate-400 h-[300px] w-6">
+                    <span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+                  </div>
+                  <div>
+                    <!-- Matrix -->
+                    <div id="matrix-grid" class="grid grid-cols-5 grid-rows-5 gap-1.5 p-1.5 bg-slate-900 border border-slate-700 rounded-lg w-[300px] h-[300px]">
+                      <!-- Rendered dynamically by Javascript -->
+                    </div>
+                    <!-- X-axis (Dampak) -->
+                    <div class="grid grid-cols-5 text-center font-bold text-xs text-slate-400 pt-2 w-[300px]">
+                      <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-4 text-xs justify-center">
+                  <div class="flex items-center gap-1.5"><div class="w-3.5 h-3.5 bg-emerald-600 rounded"></div> <span>Rendah (1-4)</span></div>
+                  <div class="flex items-center gap-1.5"><div class="w-3.5 h-3.5 bg-yellow-400 rounded"></div> <span>Sedang (5-12)</span></div>
+                  <div class="flex items-center gap-1.5"><div class="w-3.5 h-3.5 bg-red-600 rounded"></div> <span>Tinggi (15-25)</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Master View Table (Kertas Kerja Induk) -->
+            <div class="bg-slate-800 border border-slate-700/60 p-6 rounded-2xl shadow-md lg:col-span-2 flex flex-col justify-between">
+              <div>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 border-b border-slate-700 pb-2">
+                  <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i data-lucide="table-properties" class="text-blue-500 w-4 h-4"></i> Master Kertas Kerja Register Risiko
+                  </h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                  <table id="mainRegisterTable" class="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr class="bg-slate-900 border-b border-slate-700 text-slate-300">
+                        <th class="p-2.5">No</th>
+                        <th class="p-2.5">Kode</th>
+                        <th class="p-2.5">Pernyataan Risiko</th>
+                        <th class="p-2.5 text-center">Inheren</th>
+                        <th class="p-2.5 text-center">Residual</th>
+                        <th class="p-2.5 text-center">RTP</th>
+                        <th class="p-2.5 text-center">Target</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-700" id="mainRegisterBody">
+                      <tr>
+                        <td colspan="7" class="p-4 text-center text-slate-500 italic">Membaca Data, Harap tunggu atau klik Sync...</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- === FORM 1a: KONTEKS STRATEGIS === -->
+        <section id="sec-f1a" class="hidden bg-slate-800 border border-slate-700/60 rounded-2xl shadow-xl p-6 no-print">
+          <div class="border-b border-slate-700 pb-3 mb-6">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+              <i data-lucide="compass" class="text-blue-500"></i> Form 1a: Penetapan Konteks Strategis OPD
+            </h2>
+          </div>
+          <form id="f1aForm" onsubmit="submitForm(event, 'F1a')" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nama Pemda</label>
+                <input type="text" id="f1a-pemda" required value="Pemerintah Kabupaten Buol" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nama OPD</label>
+                <input type="text" id="f1a-opd" required value="Dinas Pertanian dan Ketahanan Pangan" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tahun Penilaian</label>
+                <input type="text" id="f1a-tahun" required placeholder="Contoh: 2026" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Periode Renstra</label>
+                <input type="text" id="f1a-renstra" required placeholder="Contoh: Periode Renstra 2025 -2029" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Urusan Pemerintahan</label>
+                <input type="text" id="f1a-urusan" required value="Urusan Bidang Pertanian dan Pangan" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tujuan Strategis</label>
+                <textarea id="f1a-tujuan" required rows="2" placeholder="Uraikan detail Tujuan Strategis OPD..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Sasaran Strategis</label>
+                <textarea id="f1a-sasaran" required rows="2" placeholder="Uraikan detail Sasaran Strategis OPD..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Indikator Kinerja Sasaran</label>
+                <textarea id="f1a-indikator" required rows="2" placeholder="Contoh: Persentase Peningkatan Produksi Tanaman Pangan" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Target Indikator</label>
+                <input type="text" id="f1a-target" required placeholder="Contoh: 0.2576" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-slate-700">
+              <button type="submit" id="btn-f1a" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Form 1a
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- === FORM 1b: KONTEKS OPERASIONAL === -->
+        <section id="sec-f1b" class="hidden bg-slate-800 border border-slate-700/60 rounded-2xl shadow-xl p-6 no-print">
+          <div class="border-b border-slate-700 pb-3 mb-6">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+              <i data-lucide="file-cog" class="text-blue-500"></i> Form 1b: Penetapan Konteks Operasional OPD
+            </h2>
+          </div>
+          <form id="f1bForm" onsubmit="submitForm(event, 'F1b')" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nama Pemda</label>
+                <input type="text" id="f1b-pemda" required value="Pemerintah Kabupaten Buol" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nama OPD</label>
+                <input type="text" id="f1b-opd" required value="Dinas Pertanian dan Ketahanan Pangan" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tahun Penilaian</label>
+                <input type="text" id="f1b-tahun" required placeholder="Contoh: 2026" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Periode Renstra</label>
+                <input type="text" id="f1b-renstra" required placeholder="Contoh: Periode Renstra 2025 -2029" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Urusan Pemerintahan</label>
+                <input type="text" id="f1b-urusan" required value="Urusan Bidang Pertanian dan Pangan" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nama Program</label>
+                <input type="text" id="f1b-program" required placeholder="Contoh: Program Penyediaan dan Pengembangan Sarana Pertanian" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nama Kegiatan</label>
+                <input type="text" id="f1b-kegiatan" required placeholder="Contoh: Penyediaan Prasarana Pertanian" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tujuan Kegiatan</label>
+                <textarea id="f1b-tujuan" required rows="2" placeholder="Contoh: Meningkatkan ketersediaan sarpas pertanian..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Indikator Keluaran (Output)</label>
+                <textarea id="f1b-indikator" required rows="2" placeholder="Contoh: Jumlah kelompok tani penerima bantuan bantuan sarana alat mesin pertanian" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tahap Utama Pelaksanaan Kegiatan</label>
+                <input type="text" id="f1b-tahap" required placeholder="Contoh: Perencanaan, Pengadaan barang/jasa, Verifikasi kelompok, Distribusi" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-slate-700">
+              <button type="submit" id="btn-f1b" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Form 1b
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- === FORM 2a: IDENTIFIKASI RISIKO STRATEGIS === -->
+        <section id="sec-f2a" class="hidden bg-slate-800 border border-slate-700/60 rounded-2xl shadow-xl p-6 no-print">
+          <div class="border-b border-slate-700 pb-3 mb-6">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+              <i data-lucide="file-warning" class="text-blue-500"></i> Form 2a: Identifikasi Risiko Tingkat Strategis (OPD)
+            </h2>
+          </div>
+          <form id="f2aForm" onsubmit="submitForm(event, 'F2a')" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="md:col-span-3">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pilih Konteks Strategis (Form 1a)</label>
+                <select id="f2a-context-select" required onchange="onF1aSelected(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                  <option value="">-- Hubungkan dengan Konteks Strategis --</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Kode Risiko</label>
+                <input type="text" id="f2a-kode" required placeholder="Contoh: RSO.26.02.01.01" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pemilik Risiko (Bidang/Unit Kerja)</label>
+                <input type="text" id="f2a-pemilik" required placeholder="Contoh: Bidang TPH / Bid. Perkebunan" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tujuan Strategis</label>
+                <textarea id="f2a-tujuan" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400 font-medium" rows="3"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Sasaran Strategis</label>
+                <textarea id="f2a-sasaran" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400 font-medium" rows="3"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Indikator Kinerja Sasaran</label>
+                <textarea id="f2a-indikator" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400 font-medium" rows="3"></textarea>
+              </div>
+              <div class="md:col-span-3">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pernyataan Risiko (Risk Event)</label>
+                <textarea id="f2a-risiko" required rows="2" placeholder="Contoh: Ketersediaan sarana produksi terbatas" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              <div class="md:col-span-3 p-4 bg-slate-900/60 rounded-xl border border-slate-700 space-y-4">
+                <h4 class="text-xs font-bold text-blue-400 uppercase">Penyebab Risiko (Sebab)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Kategori Sebab</label>
+                    <select id="f2a-kat-sebab" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                      <option value="Man">Man (Manusia)</option>
+                      <option value="Money">Money (Anggaran)</option>
+                      <option value="Method">Method (Metode/SOP)</option>
+                      <option value="Machine">Machine (Alat/Sistem)</option>
+                      <option value="Material">Material (Bahan)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Sumber Sebab</label>
+                    <select id="f2a-sumber" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                      <option value="Internal">Internal</option>
+                      <option value="Eksternal">Eksternal</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Sifat Kendali</label>
+                    <select id="f2a-control" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                      <option value="C">C - Can Control</option>
+                      <option value="UC">UC - Uncontrollable</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Uraian Detail Sebab</label>
+                  <textarea id="f2a-sebab" required rows="2" placeholder="Uraikan detail sebab risiko..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+                </div>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Uraian Dampak Risiko</label>
+                <textarea id="f2a-dampak" required rows="2" placeholder="Uraikan dampak yang ditimbulkan..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pihak / OPD yang Terkena Dampak</label>
+                <textarea id="f2a-pihak-dampak" required rows="2" placeholder="Contoh: DPKP, Petani, Masyarakat" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-slate-700">
+              <button type="submit" id="btn-f2a" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Form 2a
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- === FORM 2b: IDENTIFIKASI RISIKO OPERASIONAL === -->
+        <section id="sec-f2b" class="hidden bg-slate-800 border border-slate-700/60 rounded-2xl shadow-xl p-6 no-print">
+          <div class="border-b border-slate-700 pb-3 mb-6">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+              <i data-lucide="file-spreadsheet" class="text-blue-500"></i> Form 2b: Identifikasi Risiko Tingkat Operasional
+            </h2>
+          </div>
+          <form id="f2bForm" onsubmit="submitForm(event, 'F2b')" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="md:col-span-3">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pilih Konteks Operasional (Form 1b)</label>
+                <select id="f2b-context-select" required onchange="onF1bSelected(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                  <option value="">-- Hubungkan dengan Konteks Operasional --</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Kode Risiko</label>
+                <input type="text" id="f2b-kode" required placeholder="Contoh: ROO.26.03.01.01" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pemilik Risiko (Seksi/Sub-Unit)</label>
+                <input type="text" id="f2b-pemilik" required placeholder="Contoh: Seksi Distribusi / PPK / PPTK" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nama Program</label>
+                <input type="text" id="f2b-program" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nama Kegiatan</label>
+                <input type="text" id="f2b-kegiatan" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tujuan Kegiatan</label>
+                <textarea id="f2b-tujuan" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400" rows="1"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tahap Utama Pelaksanaan</label>
+                <input type="text" id="f2b-tahap" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pernyataan Risiko (Risk Event)</label>
+                <textarea id="f2b-risiko" required rows="2" placeholder="Contoh: Keterlambatan penyerahan berkas SPJ kelompok tani..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              <div class="md:col-span-2 p-4 bg-slate-900/60 rounded-xl border border-slate-700 space-y-4">
+                <h4 class="text-xs font-bold text-blue-400 uppercase">Penyebab Risiko (Sebab)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Kategori Sebab</label>
+                    <select id="f2b-kat-sebab" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                      <option value="Man">Man (Manusia)</option>
+                      <option value="Money">Money (Anggaran)</option>
+                      <option value="Method">Method (SOP/Prosedur)</option>
+                      <option value="Machine">Machine (Aplikasi/Alat)</option>
+                      <option value="Material">Material (Bahan)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Sumber Sebab</label>
+                    <select id="f2b-sumber" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                      <option value="Internal">Internal</option>
+                      <option value="Eksternal">Eksternal</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Sifat Kendali</label>
+                    <select id="f2b-control" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                      <option value="C">C - Can Control</option>
+                      <option value="UC">UC - Uncontrollable</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Uraian Detail Sebab</label>
+                  <textarea id="f2b-sebab" required rows="2" placeholder="Uraikan detail penyebab operasional..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Uraian Dampak Risiko</label>
+                <textarea id="f2b-dampak" required rows="2" placeholder="Uraikan dampak operasional yang timbul..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pihak / OPD yang Terkena Dampak</label>
+                <textarea id="f2b-pihak-dampak" required rows="2" placeholder="Contoh: Bidang TPH, Kelompok Tani" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-slate-700">
+              <button type="submit" id="btn-f2b" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Form 2b
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- === FORM 3a: PENGUKURAN INHEREN === -->
+        <section id="sec-f3a" class="hidden bg-slate-800 border border-slate-700/60 rounded-2xl shadow-xl p-6 no-print">
+          <div class="border-b border-slate-700 pb-3 mb-6">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+              <i data-lucide="gauge" class="text-blue-500"></i> Form 3a: Pengukuran Risiko Sebelum Pengendalian (Inheren)
+            </h2>
+          </div>
+          <form id="f3aForm" onsubmit="submitForm(event, 'F3a')" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pilih Risiko Teridentifikasi (Form 2a / 2b)</label>
+                <select id="f3a-risk-select" required onchange="onF2Selected(this, 'f3a')" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                  <option value="">-- Pilih Risiko --</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Kategori Risiko</label>
+                <input type="text" id="f3a-kategori" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pernyataan Risiko</label>
+                <input type="text" id="f3a-risiko" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400">
+              </div>
+              
+              <div class="p-5 bg-slate-900/60 rounded-xl border border-slate-700 space-y-4 md:col-span-2">
+                <h4 class="text-xs font-bold text-blue-400 uppercase border-b border-slate-700 pb-2">Skoring Inheren</h4>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Probabilitas / Kemungkinan</label>
+                    <select id="f3a-prob" required onchange="calculateFormSkor('f3a-prob', 'f3a-damp', 'f3a-skor', 'f3a-tingkat')" class="w-full bg-slate-850 border border-slate-700 rounded-lg p-2 text-slate-800">
+                      <option value="1">1 - Jarang Sekali</option><option value="2">2 - Jarang</option><option value="3">3 - Sering</option><option value="4">4 - Sangat Sering</option><option value="5">5 - Hampir Pasti</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Dampak / Konsekuensi</label>
+                    <select id="f3a-damp" required onchange="calculateFormSkor('f3a-prob', 'f3a-damp', 'f3a-skor', 'f3a-tingkat')" class="w-full bg-slate-850 border border-slate-700 rounded-lg p-2 text-slate-800">
+                      <option value="1">1 - Tidak Signifikan</option><option value="2">2 - Kurang Signifikan</option><option value="3">3 - Signifikan</option><option value="4">4 - Sangat Signifikan</option><option value="5">5 - Bencana</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between bg-slate-850 p-3 rounded-lg border border-slate-700">
+                  <span class="text-xs text-slate-400">Skor Inheren: <strong id="f3a-skor" class="text-lg text-white ml-1">1</strong></span>
+                  <span id="f3a-tingkat" class="text-xs font-bold px-2.5 py-1 rounded bg-green-500 text-white">Rendah</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-slate-700">
+              <button type="submit" id="btn-f3a" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Form 3a
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- === FORM 3b: PENGUKURAN RESIDUAL === -->
+        <section id="sec-f3b" class="hidden bg-slate-800 border border-slate-700/60 rounded-2xl shadow-xl p-6 no-print">
+          <div class="border-b border-slate-700 pb-3 mb-6">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+              <i data-lucide="activity" class="text-blue-500"></i> Form 3b: Pengukuran Risiko Setelah Pengendalian (Residual)
+            </h2>
+          </div>
+          <form id="f3bForm" onsubmit="submitForm(event, 'F3b')" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pilih Risiko Teridentifikasi (Form 2a / 2b)</label>
+                <select id="f3b-risk-select" required onchange="onF2Selected(this, 'f3b')" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                  <option value="">-- Pilih Risiko --</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Kategori Risiko</label>
+                <input type="text" id="f3b-kategori" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pernyataan Risiko</label>
+                <input type="text" id="f3b-risiko" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400">
+              </div>
+              
+              <div class="p-5 bg-slate-900/60 rounded-xl border border-slate-700 space-y-4 md:col-span-2">
+                <h4 class="text-xs font-bold text-blue-400 uppercase border-b border-slate-700 pb-2">Skoring Residual</h4>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Probabilitas / Kemungkinan</label>
+                    <select id="f3b-prob" required onchange="calculateFormSkor('f3b-prob', 'f3b-damp', 'f3b-skor', 'f3b-tingkat')" class="w-full bg-slate-850 border border-slate-700 rounded-lg p-2 text-slate-800">
+                      <option value="1">1 - Jarang Sekali</option><option value="2">2 - Jarang</option><option value="3">3 - Sering</option><option value="4">4 - Sangat Sering</option><option value="5">5 - Hampir Pasti</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Dampak / Konsekuensi</label>
+                    <select id="f3b-damp" required onchange="calculateFormSkor('f3b-prob', 'f3b-damp', 'f3b-skor', 'f3b-tingkat')" class="w-full bg-slate-850 border border-slate-700 rounded-lg p-2 text-slate-800">
+                      <option value="1">1 - Tidak Signifikan</option><option value="2">2 - Kurang Signifikan</option><option value="3">3 - Signifikan</option><option value="4">4 - Sangat Signifikan</option><option value="5">5 - Bencana</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between bg-slate-850 p-3 rounded-lg border border-slate-700">
+                  <span class="text-xs text-slate-400">Skor Residual: <strong id="f3b-skor" class="text-lg text-white ml-1">1</strong></span>
+                  <span id="f3b-tingkat" class="text-xs font-bold px-2.5 py-1 rounded bg-green-500 text-white">Rendah</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-slate-700">
+              <button type="submit" id="btn-f3b" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Form 3b
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- === FORM 4: ANALISIS PRIORITAS === -->
+        <section id="sec-f4" class="hidden bg-slate-800 border border-slate-700/60 rounded-2xl shadow-xl p-6 no-print">
+          <div class="border-b border-slate-700 pb-3 mb-6">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+              <i data-lucide="check-square" class="text-blue-500"></i> Form 4: Hasil Analisis & Penilaian Pengendalian Existing
+            </h2>
+          </div>
+          <form id="f4Form" onsubmit="submitForm(event, 'F4')" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pilih Risiko Terukur (Form 3a / 3b)</label>
+                <select id="f4-risk-select" required onchange="onF3Selected(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                  <option value="">-- Pilih Risiko --</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Skor Inheren</label>
+                <input type="text" id="f4-inheren" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Skor Residual</label>
+                <input type="text" id="f4-residual" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Uraian Pengendalian yang Sudah Ada</label>
+                <textarea id="f4-puraian" required rows="2" placeholder="Contoh: Dilakukan monitoring berkala, verifikasi data..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Celah Pengendalian</label>
+                <textarea id="f4-pcelah" required rows="2" placeholder="Uraikan kelemahan/gap kontrol saat ini..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Efektivitas Pengendalian</label>
+                <select id="f4-pefektif" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                  <option value="Belum">Belum Memadai</option>
+                  <option value="Memadai">Memadai</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Respon Risiko</label>
+                <input type="text" id="f4-respon" required placeholder="Contoh: Mitigasi / Penguatan Pengendalian" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Keterangan Tambahan</label>
+                <input type="text" id="f4-keterangan" placeholder="Isi jika diperlukan..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-slate-700">
+              <button type="submit" id="btn-f4" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Form 4
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- === FORM 6: RENCANA TINDAK PENGENDALIAN (RTP) === -->
+        <section id="sec-f6" class="hidden bg-slate-800 border border-slate-700/60 rounded-2xl shadow-xl p-6 no-print">
+          <div class="border-b border-slate-700 pb-3 mb-6">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+              <i data-lucide="shield-plus" class="text-blue-500"></i> Form 6: Rencana Tindak Pengendalian (RTP)
+            </h2>
+          </div>
+          <form id="f6Form" onsubmit="submitForm(event, 'F6')" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pilih Risiko Teranalisis (Form 4)</label>
+                <select id="f6-risk-select" required onchange="onF4Selected(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                  <option value="">-- Pilih Risiko --</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Uraian Pengendalian Existing</label>
+                <input type="text" id="f6-existingControl" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Celah Pengendalian</label>
+                <input type="text" id="f6-celah" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-400">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Rencana Tindak Pengendalian (RTP) Baru</label>
+                <textarea id="f6-rtp" required rows="3" placeholder="Rencana aksi mitigasi baru..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+              
+              <!-- Target Risk setelah RTP -->
+              <div class="p-5 bg-slate-900/60 rounded-xl border border-slate-700 space-y-4">
+                <h4 class="text-xs font-bold text-blue-400 uppercase flex items-center gap-2 border-b border-slate-700 pb-2">
+                  <span>Target Risk Pasca RTP</span>
+                </h4>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Probabilitas Target</label>
+                    <select id="f6-tprob" required onchange="calculateFormSkor('f6-tprob', 'f6-tdamp', 'f6-tskor', 'f6-ttingkat')" class="w-full bg-slate-850 border border-slate-700 rounded-lg p-2 text-slate-800">
+                      <option value="1">1 - Jarang Sekali</option><option value="2">2 - Jarang</option><option value="3">3 - Sering</option><option value="4">4 - Sangat Sering</option><option value="5">5 - Hampir Pasti</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Dampak Target</label>
+                    <select id="f6-tdamp" required onchange="calculateFormSkor('f6-tprob', 'f6-tdamp', 'f6-tskor', 'f6-ttingkat')" class="w-full bg-slate-850 border border-slate-700 rounded-lg p-2 text-slate-800">
+                      <option value="1">1 - Sangat Rendah</option><option value="2">2 - Rendah</option><option value="3">3 - Sedang</option><option value="4">4 - Tinggi</option><option value="5">5 - Bencana</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between bg-slate-850 p-3 rounded-lg border border-slate-700">
+                  <span class="text-xs text-slate-400">Target Skor: <strong id="f6-tskor" class="text-lg text-white ml-1">1</strong></span>
+                  <span id="f6-ttingkat" class="text-xs font-bold px-2.5 py-1 rounded bg-green-500 text-white">Rendah</span>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pemilik / Penanggung Jawab RTP</label>
+                  <input type="text" id="f6-pj" required placeholder="Contoh: Kabid Tanaman Pangan" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Target Waktu Penyelesaian</label>
+                  <input type="text" id="f6-waktu" required placeholder="Contoh: Bulanan / Triwulan II" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-slate-700">
+              <button type="submit" id="btn-f6" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Form 6
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- === FORM 7: INFOKOM === -->
+        <section id="sec-f7" class="hidden bg-slate-800 border border-slate-700/60 rounded-2xl shadow-xl p-6 no-print">
+          <div class="border-b border-slate-700 pb-3 mb-6">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+              <i data-lucide="info" class="text-blue-500"></i> Form 7: Rencana & Realisasi Pengkomunikasian Pengendalian
+            </h2>
+          </div>
+          <form id="f7Form" onsubmit="submitForm(event, 'F7')" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pilih Risiko Teranalisis (Form 4)</label>
+                <select id="f7-risk-select" required onchange="onF4SelectedInfo(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                  <option value="">-- Pilih Risiko --</option>
+                </select>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Kegiatan Pengendalian yang Dibutuhkan</label>
+                <input type="text" id="f7-kegiatan" required placeholder="Contoh: Rapat koordinasi teknis, nota dinas regulasi baru" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Media / Sarana Pengkomunikasian</label>
+                <input type="text" id="f7-media" required placeholder="Contoh: Laporan monitoring, Nota dinas, Dashboard online" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Penyedia Informasi (Seksi/Bidang)</label>
+                <input type="text" id="f7-penyedia" required placeholder="Contoh: Bidang TPH / Seksi Perencanaan" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Penerima Informasi</label>
+                <input type="text" id="f7-penerima" required value="DPKP" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1">Rencana Waktu Pelaksanaan</label>
+                  <input type="text" id="f7-rwaktu" required placeholder="Contoh: Bulanan / Musim Tanam" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-100">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1">Realisasi Waktu Pelaksanaan</label>
+                  <input type="text" id="f7-realwaktu" placeholder="Diisi saat realisasi" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-100">
+                </div>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Keterangan</label>
+                <input type="text" id="f7-ket" placeholder="Keterangan tambahan..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-slate-700">
+              <button type="submit" id="btn-f7" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Form 7
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- === FORM 8: PEMANTAUAN PI === -->
+        <section id="sec-f8" class="hidden bg-slate-800 border border-slate-700/60 rounded-2xl shadow-xl p-6 no-print">
+          <div class="border-b border-slate-700 pb-3 mb-6">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+              <i data-lucide="activity" class="text-blue-500"></i> Form 8: Rencana & Realisasi Pemantauan Kegiatan Pengendalian Intern
+            </h2>
+          </div>
+          <form id="f8Form" onsubmit="submitForm(event, 'F8')" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pilih Risiko Teranalisis (Form 4)</label>
+                <select id="f8-risk-select" required onchange="onF4SelectedMoni(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                  <option value="">-- Pilih Risiko --</option>
+                </select>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Kegiatan Pengendalian yang Dibutuhkan</label>
+                <input type="text" id="f8-kegiatan" required placeholder="Contoh: Pemantauan kalender tanam, evaluasi logistik sarpas" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Bentuk / Metode Pemantauan yang Diperlukan</label>
+                <input type="text" id="f8-metode" required placeholder="Contoh: Monitoring laporan iklim mikro, uji petik acak" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Penanggung Jawab Pemantauan</label>
+                <input type="text" id="f8-pj" required placeholder="Contoh: Bid.TPH / Bid.KDP / Tim Evaluasi" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1">Rencana Waktu Pemantauan</label>
+                  <input type="text" id="f8-rwaktu" required placeholder="Contoh: Per Triwulan" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-100">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1">Realisasi Waktu Pelaksanaan</label>
+                  <input type="text" id="f8-realwaktu" placeholder="Diisi saat realisasi" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-100">
+                </div>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Keterangan Hasil Pemantauan</label>
+                <textarea id="f8-ket" placeholder="Keterangan hasil pemantauan..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100"></textarea>
+              </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-slate-700">
+              <button type="submit" id="btn-f8" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Form 8
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- === FORM 9: REALISASI KEJADIAN === -->
+        <section id="sec-f9" class="hidden bg-slate-800 border border-slate-700/60 rounded-2xl shadow-xl p-6 no-print">
+          <div class="border-b border-slate-700 pb-3 mb-6">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+              <i data-lucide="history" class="text-blue-500"></i> Form 9: Pencatatan Kejadian Risiko & Pelaksanaan RTP
+            </h2>
+          </div>
+          <form id="f9Form" onsubmit="submitForm(event, 'F9')" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Pilih Risiko Teranalisis (Form 4)</label>
+                <select id="f9-risk-select" required onchange="onF4SelectedKejadian(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-100">
+                  <option value="">-- Pilih Risiko --</option>
+                </select>
+              </div>
+
+              <!-- Kejadian Aktual -->
+              <div class="p-5 bg-slate-900/60 rounded-xl border border-slate-700 space-y-4">
+                <h4 class="text-xs font-bold text-amber-500 uppercase border-b border-slate-700 pb-2">Kejadian Risiko yang Terjadi</h4>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1">Tanggal Terjadi</label>
+                  <input type="text" id="f9-tgl" required placeholder="Contoh: April s/d Mei" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-100">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1">Penyebab Aktual Kejadian</label>
+                  <textarea id="f9-sebab" required rows="2" placeholder="Sebab timbulnya risiko di lapangan..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-100"></textarea>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1">Dampak Aktual yang Ditimbulkan</label>
+                  <textarea id="f9-dampak" required rows="2" placeholder="Akibat aktual..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-100"></textarea>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1">Keterangan Kejadian</label>
+                  <input type="text" id="f9-ket" placeholder="Status penanganan kerugian..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-100">
+                </div>
+              </div>
+
+              <!-- Pelaksanaan RTP -->
+              <div class="p-5 bg-slate-900/60 rounded-xl border border-slate-700 space-y-4 flex flex-col justify-between">
+                <div class="space-y-4">
+                  <h4 class="text-xs font-bold text-amber-500 uppercase border-b border-slate-700 pb-2">Pelaksanaan Tindak Pengendalian (RTP)</h4>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Rencana RTP (Tercatat di Form 6)</label>
+                    <textarea id="f9-rencana-rtp" required rows="2" placeholder="Rencana RTP..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-100"></textarea>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Realisasi Pelaksanaan RTP</label>
+                    <textarea id="f9-realisasi-rtp" required rows="2" placeholder="Deskripsikan bukti konkret realisasi..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-100"></textarea>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Keterangan Realisasi</label>
+                    <input type="text" id="f9-ket-real" placeholder="Tuntas / Terlambat / Berkelanjutan..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-100">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-slate-700">
+              <button type="submit" id="btn-f9" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Form 9
+              </button>
+            </div>
+          </form>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- === ANALISIS AI MODAL === -->
+  <div id="ai-analysis-modal" class="no-print hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Header -->
+      <div class="flex justify-between items-center bg-slate-950 px-6 py-4 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="bg-violet-600 p-2 rounded-xl text-white shadow-lg shadow-violet-900/30">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Analisis Kontrol & Peta Risiko (Gemini AI)</h3>
+            <p class="text-[10px] text-slate-400">Analisis cerdas berdasarkan Kertas Kerja DPKP Buol</p>
+          </div>
+        </div>
+        <button onclick="toggleAIModal(false)" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="p-6 overflow-y-auto flex-grow space-y-4 text-slate-300" id="ai-modal-body">
+        <div id="ai-state-ready" class="text-center py-10 space-y-5">
+          <div class="inline-flex items-center justify-center bg-violet-950/40 border border-violet-800/40 p-4.5 rounded-full text-violet-400">
+            <i data-lucide="brain" class="w-12 h-12 animate-pulse"></i>
+          </div>
+          <div class="max-w-md mx-auto space-y-2">
+            <h4 class="font-extrabold text-white text-base">Konsultan Manajemen Risiko AI Anda</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Teknologi AI akan memindai seluruh *risk register* (Form 1a hingga 9) dan memberikan peta sebaran risiko beserta langkah koreksi taktis per divisi.
+            </p>
+          </div>
+          <button onclick="executeAIAnalysis()" class="bg-violet-600 hover:bg-violet-500 text-white font-bold py-2.5 px-6 rounded-lg text-xs transition-all flex items-center gap-2 mx-auto">
+            <i data-lucide="zap" class="w-4 h-4"></i> Mulai Analisis Risiko AI
+          </button>
+        </div>
+
+        <div id="ai-state-loading" class="hidden text-center py-14 space-y-4">
+          <div class="relative w-16 h-16 mx-auto">
+            <div class="absolute inset-0 border-4 border-violet-500/20 border-t-violet-500 rounded-full animate-spin"></div>
+            <div class="absolute inset-2 flex items-center justify-center">
+              <i data-lucide="cog" class="w-6 h-6 text-violet-400 animate-spin"></i>
+            </div>
+          </div>
+          <h4 class="font-bold text-white text-sm" id="ai-loading-title">Meluncurkan Mesin Analitis...</h4>
+        </div>
+
+        <div id="ai-state-result" class="hidden space-y-4">
+          <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+            <span class="text-xs text-violet-400 flex items-center gap-1.5 font-semibold">
+              <i data-lucide="check-circle" class="w-4 h-4"></i> Laporan Rekomendasi Selesai Dirumuskan
+            </span>
+            <div class="flex gap-2">
+              <button onclick="copyAIResult()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5">
+                <i data-lucide="copy" class="w-3.5 h-3.5" id="ai-copy-icon"></i> <span id="ai-copy-text">Salin Teks</span>
+              </button>
+              <button onclick="exportAIResultToWord()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Ekspor ke Word
+              </button>
+            </div>
+          </div>
+          <div id="ai-response-rendered" class="text-xs space-y-4 leading-relaxed font-sans bg-slate-950 p-6 rounded-xl border border-slate-800 max-h-[50vh] overflow-y-auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- === EKSPOR MODAL (EXCEL SELECTOR) === -->
+  <div id="print-sheet-selector" class="no-print hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <i data-lucide="download" class="text-emerald-500 w-5 h-5"></i> Ekspor Kertas Kerja ke Excel
+        </h3>
+        <button onclick="togglePrintSelector(false)" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <p class="text-xs text-slate-400">Silakan pilih kertas kerja yang ingin Anda ekspor ke format Excel (.xls):</p>
+      
+      <div class="space-y-2.5 max-h-[400px] overflow-y-auto pr-1">
+        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-xs">Form 1a: Konteks Strategis</span>
+          <button onclick="exportExcel('F1a')" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-1 px-3 rounded">Ekspor</button>
+        </div>
+        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-xs">Form 1b: Konteks Operasional</span>
+          <button onclick="exportExcel('F1b')" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-1 px-3 rounded">Ekspor</button>
+        </div>
+        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-xs">Form 2a: Id. Strategis</span>
+          <button onclick="exportExcel('F2a')" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-1 px-3 rounded">Ekspor</button>
+        </div>
+        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-xs">Form 2b: Id. Operasional</span>
+          <button onclick="exportExcel('F2b')" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-1 px-3 rounded">Ekspor</button>
+        </div>
+        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-xs">Form 3a: Pengukuran Inheren</span>
+          <button onclick="exportExcel('F3a')" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-1 px-3 rounded">Ekspor</button>
+        </div>
+        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-xs">Form 3b: Pengukuran Residual</span>
+          <button onclick="exportExcel('F3b')" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-1 px-3 rounded">Ekspor</button>
+        </div>
+        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-xs">Form 4: Analisis & Prioritas</span>
+          <button onclick="exportExcel('F4')" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-1 px-3 rounded">Ekspor</button>
+        </div>
+        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-xs">Form 6: RTP</span>
+          <button onclick="exportExcel('F6')" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-1 px-3 rounded">Ekspor</button>
+        </div>
+        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-xs">Form 7: Infokom</span>
+          <button onclick="exportExcel('F7')" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-1 px-3 rounded">Ekspor</button>
+        </div>
+        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-xs">Form 8: Pemantauan PI</span>
+          <button onclick="exportExcel('F8')" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-1 px-3 rounded">Ekspor</button>
+        </div>
+        <div class="flex justify-between items-center bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+          <span class="text-xs">Form 9: Realisasi Kejadian</span>
+          <button onclick="exportExcel('F9')" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold py-1 px-3 rounded">Ekspor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print Rendering Hook Area -->
+  <div id="print-render-area" class="print-only hidden p-8 bg-white text-black"></div>
+
+  <script>
+    lucide.createIcons();
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `flex items-center gap-3 p-4 rounded-xl shadow-lg border text-sm transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto max-w-sm ${
+        type === 'success' ? 'bg-emerald-950/90 text-emerald-300 border-emerald-800' : 'bg-rose-950/90 text-rose-300 border-rose-800'
+      }`;
+      const icon = type === 'success' ? 'check-circle' : 'alert-circle';
+      toast.innerHTML = `<i data-lucide="${icon}" class="w-5 h-5 shrink-0"></i><span class="font-medium">${message}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons();
+      setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-[-8px]');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Toggle Sidebar Drawer on Mobile Devices
+    function toggleSidebar(isOpen) {
+      const sidebar = document.getElementById('main-sidebar');
+      if (isOpen) {
+        sidebar.classList.remove('-translate-x-full');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+      }
+    }
+
+    // Client-side Database State
+    let database = {
+      'F1a_Konteks_Strategis': [],
+      'F1b_Konteks_Operasional': [],
+      'F2a_Identifikasi_Strategis': [],
+      'F2b_Identifikasi_Operasional': [],
+      'F3a_Inheren': [],
+      'F3b_Residual': [],
+      'F4_Analisis_Prioritas': [],
+      'F6_RTP': [],
+      'F7_Infokom': [],
+      'F8_Monitoring_PI': [],
+      'F9_Monitor_Kejadian': []
+    };
+
+    function getColorClass(skor) {
+      if (skor >= 15) return 'bg-red-600 text-white border-red-700';
+      if (skor >= 5) return 'bg-yellow-400 text-slate-950 border-yellow-500';
+      return 'bg-emerald-600 text-white border-emerald-700';
+    }
+
+    // Switch Tabs / Sections
+    function switchTab(tab) {
+      // Close sidebar drawer on mobile after selection
+      toggleSidebar(false);
+
+      const tabs = ['dashboard', 'f1a', 'f1b', 'f2a', 'f2b', 'f3a', 'f3b', 'f4', 'f6', 'f7', 'f8', 'f9'];
+      tabs.forEach(t => {
+        const sec = document.getElementById(`sec-${t}`);
+        const btn = document.getElementById(`tab-${t}`);
+        if (sec) sec.classList.add('hidden');
+        if (btn) {
+          btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+          btn.classList.add('text-slate-400', 'hover:bg-slate-900', 'hover:text-slate-100');
+        }
+      });
+      const actSec = document.getElementById(`sec-${tab}`);
+      const actBtn = document.getElementById(`tab-${tab}`);
+      if (actSec) actSec.classList.remove('hidden');
+      if (actBtn) {
+        actBtn.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+        actBtn.classList.remove('text-slate-400', 'hover:bg-slate-900', 'hover:text-slate-100');
+      }
+      if (tab !== 'dashboard') {
+        populateDropdowns();
+      } else {
+        renderDashboardData();
+      }
+    }
+
+    // Populate drop-down list relations between forms
+    function populateDropdowns() {
+      // F1a context list to Form 2a
+      const f1aList = database['F1a_Konteks_Strategis'] || [];
+      const f2aContext = document.getElementById('f2a-context-select');
+      if (f2aContext) {
+        f2aContext.innerHTML = '<option value="">-- Hubungkan dengan Konteks Strategis --</option>';
+        f1aList.forEach((item, idx) => {
+          f2aContext.innerHTML += `<option value="${idx}">${item['Nama Tujuan/Sasaran']}</option>`;
+        });
+      }
+
+      // F1b context list to Form 2b
+      const f1bList = database['F1b_Konteks_Operasional'] || [];
+      const f2bContext = document.getElementById('f2b-context-select');
+      if (f2bContext) {
+        f2bContext.innerHTML = '<option value="">-- Hubungkan dengan Konteks Operasional --</option>';
+        f1bList.forEach((item, idx) => {
+          f2bContext.innerHTML += `<option value="${idx}">${item['Nama Program']} -> ${item['Nama Kegiatan']}</option>`;
+        });
+      }
+
+      // Identifikasi list to Form 3a & 3b (Inheren & Residual)
+      const stratRisks = database['F2a_Identifikasi_Strategis'] || [];
+      const operRisks = database['F2b_Identifikasi_Operasional'] || [];
+      const allRisks = [...stratRisks, ...operRisks];
+
+      ['f3a', 'f3b'].forEach(formId => {
+        const sel = document.getElementById(`${formId}-risk-select`);
+        if (sel) {
+          sel.innerHTML = '<option value="">-- Pilih Risiko --</option>';
+          allRisks.forEach(item => {
+            sel.innerHTML += `<option value="${item['Kode Risiko']}">${item['Kode Risiko']} - ${item['Pernyataan Risiko']}</option>`;
+          });
+        }
+      });
+
+      // Form 3 list to Form 4 (Hasil Analisis)
+      const f3aList = database['F3a_Inheren'] || [];
+      const f4RiskSelect = document.getElementById('f4-risk-select');
+      if (f4RiskSelect) {
+        f4RiskSelect.innerHTML = '<option value="">-- Pilih Risiko --</option>';
+        f3aList.forEach(item => {
+          f4RiskSelect.innerHTML += `<option value="${item['Kode Risiko']}">${item['Kode Risiko']} - ${item['Pernyataan Risiko']}</option>`;
+        });
+      }
+
+      // Form 4 list to Form 6, 7, 8, 9
+      const f4List = database['F4_Analisis_Prioritas'] || [];
+      ['f6', 'f7', 'f8', 'f9'].forEach(formId => {
+        const sel = document.getElementById(`${formId}-risk-select`);
+        if (sel) {
+          sel.innerHTML = '<option value="">-- Pilih Risiko --</option>';
+          f4List.forEach(item => {
+            sel.innerHTML += `<option value="${item['Kode Risiko']}">${item['Kode Risiko']} - ${item['Pernyataan Risiko']}</option>`;
+          });
+        }
+      });
+    }
+
+    // Triggered when F1a selected
+    function onF1aSelected(element) {
+      const idx = element.value;
+      if (idx !== "") {
+        const item = database['F1a_Konteks_Strategis'][idx];
+        document.getElementById('f2a-tujuan').value = item['Nama Tujuan/Sasaran'] || '';
+        document.getElementById('f2a-sasaran').value = item['Sasaran Strategis'] || '';
+        document.getElementById('f2a-indikator').value = item['Indikator Sasaran'] || '';
+      }
+    }
+
+    // Triggered when F1b selected
+    function onF1bSelected(element) {
+      const idx = element.value;
+      if (idx !== "") {
+        const item = database['F1b_Konteks_Operasional'][idx];
+        document.getElementById('f2b-program').value = item['Nama Program'] || '';
+        document.getElementById('f2b-kegiatan').value = item['Nama Kegiatan'] || '';
+        document.getElementById('f2b-tujuan').value = item['Tujuan Kegiatan'] || '';
+        document.getElementById('f2b-tahap').value = item['Tahap Utama Pelaksanaan Kegiatan'] || item['Tahap Utama Proses'] || '';
+      }
+    }
+
+    // Triggered when F2 selected in Measurement Form
+    function onF2Selected(element, targetFormId) {
+      const code = element.value;
+      if (code !== "") {
+        const stratRisk = database['F2a_Identifikasi_Strategis'].find(r => r['Kode Risiko'] === code);
+        const operRisk = database['F2b_Identifikasi_Operasional'].find(r => r['Kode Risiko'] === code);
+        const risk = stratRisk || operRisk;
+        if (risk) {
+          document.getElementById(`${targetFormId}-kategori`).value = stratRisk ? 'Strategis' : 'Operasional';
+          document.getElementById(`${targetFormId}-risiko`).value = risk['Pernyataan Risiko'] || '-';
+        }
+      }
+    }
+
+    // Triggered when F3 selected in Form 4 Analisis
+    function onF3Selected(element) {
+      const code = element.value;
+      if (code !== "") {
+        const inheren = database['F3a_Inheren'].find(r => r['Kode Risiko'] === code) || {};
+        const residual = database['F3b_Residual'].find(r => r['Kode Risiko'] === code) || {};
+        document.getElementById('f4-inheren').value = inheren['Skor (Inheren)'] || '0';
+        document.getElementById('f4-residual').value = residual['Skor (Residual)'] || '0';
+      }
+    }
+
+    // Triggered when F4 selected in Form 6 RTP
+    function onF4Selected(element) {
+      const code = element.value;
+      if (code !== "") {
+        const f4 = database['F4_Analisis_Prioritas'].find(r => r['Kode Risiko'] === code) || {};
+        document.getElementById('f6-existingControl').value = f4['Pengendalian yang Sudah Ada'] || '-';
+        document.getElementById('f6-celah').value = f4['Celah Pengendalian'] || '-';
+      }
+    }
+
+    // Triggered when F4 selected in Form 7 Infokom
+    function onF4SelectedInfo(element) {
+      const code = element.value;
+      if (code !== "") {
+        const f4 = database['F4_Analisis_Prioritas'].find(r => r['Kode Risiko'] === code) || {};
+        document.getElementById('f7-kegiatan').value = f4['Pengendalian yang Sudah Ada'] || '-';
+      }
+    }
+
+    // Triggered when F4 selected in Form 8 Monitoring
+    function onF4SelectedMoni(element) {
+      const code = element.value;
+      if (code !== "") {
+        const f4 = database['F4_Analisis_Prioritas'].find(r => r['Kode Risiko'] === code) || {};
+        document.getElementById('f8-kegiatan').value = f4['Pengendalian yang Sudah Ada'] || '-';
+      }
+    }
+
+    // Triggered when F4 selected in Form 9 Kejadian
+    function onF4SelectedKejadian(element) {
+      const code = element.value;
+      if (code !== "") {
+        const f4 = database['F4_Analisis_Prioritas'].find(r => r['Kode Risiko'] === code) || {};
+        const f6 = database['F6_RTP'].find(r => r['Kode Risiko'] === code) || {};
+        document.getElementById('f9-rencana-rtp').value = f6['Rencana Tindak Pengendalian'] || '-';
+      }
+    }
+
+    // Auto calculate SPIP standard score
+    function calculateFormSkor(probId, dampId, skorId, tingkatId) {
+      const prob = parseInt(document.getElementById(probId).value) || 1;
+      const damp = parseInt(document.getElementById(dampId).value) || 1;
+      const skor = prob * damp;
+      document.getElementById(skorId).innerText = skor;
+      const el = document.getElementById(tingkatId);
+      if (skor >= 15) {
+        el.innerText = 'Tinggi';
+        el.className = 'text-xs font-bold px-2.5 py-1 rounded bg-red-600 text-white';
+      } else if (skor >= 5) {
+        el.innerText = 'Sedang';
+        el.className = 'text-xs font-bold px-2.5 py-1 rounded bg-yellow-400 text-slate-900';
+      } else {
+        el.innerText = 'Rendah';
+        el.className = 'text-xs font-bold px-2.5 py-1 rounded bg-emerald-600 text-white';
+      }
+    }
+
+    // Form Submission Handler
+    function submitForm(e, code) {
+      e.preventDefault();
+      const btn = document.getElementById(`btn-${code.toLowerCase()}`);
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...`;
+      lucide.createIcons();
+
+      let payload = {};
+      let saveFn = '';
+
+      if (code === 'F1a') {
+        payload = {
+          pemda: document.getElementById('f1a-pemda').value,
+          opd: document.getElementById('f1a-opd').value,
+          tahun: document.getElementById('f1a-tahun').value,
+          renstra: document.getElementById('f1a-renstra').value,
+          urusan: document.getElementById('f1a-urusan').value,
+          tujuan: document.getElementById('f1a-tujuan').value,
+          sasaran: document.getElementById('f1a-sasaran').value,
+          indikator: document.getElementById('f1a-indikator').value,
+          target: document.getElementById('f1a-target').value
+        };
+        saveFn = 'saveF1a';
+      } 
+      else if (code === 'F1b') {
+        payload = {
+          pemda: document.getElementById('f1b-pemda').value,
+          opd: document.getElementById('f1b-opd').value,
+          tahun: document.getElementById('f1b-tahun').value,
+          renstra: document.getElementById('f1b-renstra').value,
+          urusan: document.getElementById('f1b-urusan').value,
+          program: document.getElementById('f1b-program').value,
+          kegiatan: document.getElementById('f1b-kegiatan').value,
+          tujuan: document.getElementById('f1b-tujuan').value,
+          indikator: document.getElementById('f1b-indikator').value,
+          tahap: document.getElementById('f1b-tahap').value
+        };
+        saveFn = 'saveF1b';
+      }
+      else if (code === 'F2a') {
+        const sel = document.getElementById('f2a-context-select');
+        const textTujuan = sel.options[sel.selectedIndex].text;
+        payload = {
+          kode: document.getElementById('f2a-kode').value,
+          tujuan: textTujuan,
+          sasaran: document.getElementById('f2a-sasaran').value,
+          indikator: document.getElementById('f2a-indikator').value,
+          risiko: document.getElementById('f2a-risiko').value,
+          pemilik: document.getElementById('f2a-pemilik').value,
+          sebab: document.getElementById('f2a-sebab').value,
+          katSebab: document.getElementById('f2a-kat-sebab').value,
+          sumber: document.getElementById('f2a-sumber').value,
+          control: document.getElementById('f2a-control').value,
+          dampak: document.getElementById('f2a-dampak').value,
+          pihakDampak: document.getElementById('f2a-pihak-dampak').value
+        };
+        saveFn = 'saveF2a';
+      }
+      else if (code === 'F2b') {
+        payload = {
+          kode: document.getElementById('f2b-kode').value,
+          program: document.getElementById('f2b-program').value,
+          kegiatan: document.getElementById('f2b-kegiatan').value,
+          tujuan: document.getElementById('f2b-tujuan').value,
+          tahap: document.getElementById('f2b-tahap').value,
+          risiko: document.getElementById('f2b-risiko').value,
+          pemilik: document.getElementById('f2b-pemilik').value,
+          sebab: document.getElementById('f2b-sebab').value,
+          katSebab: document.getElementById('f2b-kat-sebab').value,
+          sumber: document.getElementById('f2b-sumber').value,
+          control: document.getElementById('f2b-control').value,
+          dampak: document.getElementById('f2b-dampak').value,
+          pihakDampak: document.getElementById('f2b-pihak-dampak').value
+        };
+        saveFn = 'saveF2b';
+      }
+      else if (code === 'F3a') {
+        const sel = document.getElementById('f3a-risk-select');
+        const textRisk = document.getElementById('f3a-risiko').value;
+        const skor = parseInt(document.getElementById('f3a-skor').innerText);
+        payload = {
+          kode: sel.value,
+          risiko: textRisk,
+          kategori: document.getElementById('f3a-kategori').value,
+          prob: parseInt(document.getElementById('f3a-prob').value),
+          damp: parseInt(document.getElementById('f3a-damp').value),
+          skor: skor,
+          tingkat: skor >= 15 ? 'Tinggi' : (skor >= 5 ? 'Sedang' : 'Rendah')
+        };
+        saveFn = 'saveF3a';
+      }
+      else if (code === 'F3b') {
+        const sel = document.getElementById('f3b-risk-select');
+        const textRisk = document.getElementById('f3b-risiko').value;
+        const skor = parseInt(document.getElementById('f3b-skor').innerText);
+        payload = {
+          kode: sel.value,
+          risiko: textRisk,
+          kategori: document.getElementById('f3b-kategori').value,
+          prob: parseInt(document.getElementById('f3b-prob').value),
+          damp: parseInt(document.getElementById('f3b-damp').value),
+          skor: skor,
+          tingkat: skor >= 15 ? 'Tinggi' : (skor >= 5 ? 'Sedang' : 'Rendah')
+        };
+        saveFn = 'saveF3b';
+      }
+      else if (code === 'F4') {
+        const sel = document.getElementById('f4-risk-select');
+        const textRisk = sel.options[sel.selectedIndex].text.split(' - ')[1];
+        payload = {
+          kode: sel.value,
+          risiko: textRisk,
+          iSkor: parseInt(document.getElementById('f4-inheren').value),
+          pUraian: document.getElementById('f4-puraian').value,
+          pCelah: document.getElementById('f4-pcelah').value,
+          pEfektif: document.getElementById('f4-pefektif').value,
+          rSkor: parseInt(document.getElementById('f4-residual').value),
+          respon: document.getElementById('f4-respon').value,
+          keterangan: document.getElementById('f4-keterangan').value
+        };
+        saveFn = 'saveF4';
+      }
+      else if (code === 'F6') {
+        const sel = document.getElementById('f6-risk-select');
+        const textRisk = sel.options[sel.selectedIndex].text.split(' - ')[1];
+        const tskor = parseInt(document.getElementById('f6-tskor').innerText);
+        payload = {
+          kode: sel.value,
+          risiko: textRisk,
+          existingControl: document.getElementById('f6-existingControl').value,
+          celah: document.getElementById('f6-celah').value,
+          rSkor: parseInt(database['F4_Analisis_Prioritas'].find(r => r['Kode Risiko'] === sel.value)?.['Residual_Skor'] || database['F4_Analisis_Prioritas'].find(r => r['Kode Risiko'] === sel.value)?.['Skor Residual'] || 0),
+          rtp: document.getElementById('f6-rtp').value,
+          tProb: parseInt(document.getElementById('f6-tprob').value),
+          tDamp: parseInt(document.getElementById('f6-tdamp').value),
+          tSkor: tskor,
+          tTingkat: tskor >= 15 ? 'Tinggi' : (tskor >= 5 ? 'Sedang' : 'Rendah'),
+          pj: document.getElementById('f6-pj').value,
+          waktu: document.getElementById('f6-waktu').value
+        };
+        saveFn = 'saveF6';
+      }
+      else if (code === 'F7') {
+        const sel = document.getElementById('f7-risk-select');
+        const textRisk = sel.options[sel.selectedIndex].text.split(' - ')[1];
+        payload = {
+          kode: sel.value,
+          risiko: textRisk,
+          kegiatan: document.getElementById('f7-kegiatan').value,
+          media: document.getElementById('f7-media').value,
+          penyedia: document.getElementById('f7-penyedia').value,
+          penerima: document.getElementById('f7-penerima').value,
+          rWaktu: document.getElementById('f7-rwaktu').value,
+          realWaktu: document.getElementById('f7-realwaktu').value,
+          ket: document.getElementById('f7-ket').value
+        };
+        saveFn = 'saveF7';
+      }
+      else if (code === 'F8') {
+        const sel = document.getElementById('f8-risk-select');
+        payload = {
+          kode: sel.value,
+          kegiatan: document.getElementById('f8-kegiatan').value,
+          metode: document.getElementById('f8-metode').value,
+          pj: document.getElementById('f8-pj').value,
+          rWaktu: document.getElementById('f8-rwaktu').value,
+          realWaktu: document.getElementById('f8-realwaktu').value,
+          ket: document.getElementById('f8-ket').value
+        };
+        saveFn = 'saveF8';
+      }
+      else if (code === 'F9') {
+        const sel = document.getElementById('f9-risk-select');
+        const textRisk = sel.options[sel.selectedIndex].text.split(' - ')[1];
+        payload = {
+          kode: sel.value,
+          risiko: textRisk,
+          tgl: document.getElementById('f9-tgl').value,
+          sebab: document.getElementById('f9-sebab').value,
+          dampak: document.getElementById('f9-dampak').value,
+          ket: document.getElementById('f9-ket').value,
+          rencanaRtp: document.getElementById('f9-rencana-rtp').value,
+          realisasiRtp: document.getElementById('f9-realisasi-rtp').value,
+          ketReal: document.getElementById('f9-ket-real').value
+        };
+        saveFn = 'saveF9';
+      }
+
+      if (typeof google !== 'undefined' && google.script) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            showToast(res, 'success');
+            document.getElementById(`${code.toLowerCase()}Form`).reset();
+            loadDatabase();
+            resetSubmitBtn(btn, code);
+          })
+          .withFailureHandler(function(err) {
+            showToast('Kesalahan: ' + err.message, 'error');
+            resetSubmitBtn(btn, code);
+          })[saveFn](payload);
+      } else {
+        // Fallback Simulation Local
+        setTimeout(() => {
+          let convertedObj = {};
+          if (code === 'F1a') {
+            convertedObj = {
+              'Nama Pemda': payload.pemda,
+              'Nama OPD': payload.opd,
+              'Tahun Penilaian': payload.tahun,
+              'Periode Renstra': payload.renstra,
+              'Urusan Pemerintahan': payload.urusan,
+              'Nama Tujuan/Sasaran': payload.tujuan,
+              'Sasaran Strategis': payload.sasaran,
+              'Indikator Sasaran': payload.indikator,
+              'Target Indikator': payload.target
+            };
+            database['F1a_Konteks_Strategis'].push(convertedObj);
+          } else if (code === 'F1b') {
+            convertedObj = {
+              'Nama Pemda': payload.pemda,
+              'Nama OPD': payload.opd,
+              'Tahun Penilaian': payload.tahun,
+              'Periode Renstra': payload.renstra,
+              'Urusan Pemerintahan': payload.urusan,
+              'Nama Program': payload.program,
+              'Nama Kegiatan': payload.kegiatan,
+              'Tujuan Kegiatan': payload.tujuan,
+              'Indikator Keluaran': payload.indikator,
+              'Tahap Utama Proses': payload.tahap
+            };
+            database['F1b_Konteks_Operasional'].push(convertedObj);
+          } else if (code === 'F2a') {
+            convertedObj = {
+              'Kode Risiko': payload.kode,
+              'Nama Tujuan/Sasaran': payload.tujuan,
+              'Sasaran Strategis': payload.sasaran,
+              'Indikator Sasaran': payload.indikator,
+              'Pernyataan Risiko': payload.risiko,
+              'Pemilik Risiko': payload.pemilik,
+              'Penyebab (Uraian)': payload.sebab,
+              'Kategori Sebab': payload.katSebab,
+              'Sumber Sebab': payload.sumber,
+              'Sifat Kendali (C/UC)': payload.control,
+              'Uraian Dampak': payload.dampak,
+              'Pihak Terkena Dampak': payload.pihakDampak
+            };
+            database['F2a_Identifikasi_Strategis'].push(convertedObj);
+          } else if (code === 'F2b') {
+            convertedObj = {
+              'Kode Risiko': payload.kode,
+              'Nama Program': payload.program,
+              'Nama Kegiatan': payload.kegiatan,
+              'Tujuan Kegiatan': payload.tujuan,
+              'Tahap Utama Proses': payload.tahap,
+              'Pernyataan Risiko': payload.risiko,
+              'Pemilik Risiko': payload.pemilik,
+              'Penyebab (Uraian)': payload.sebab,
+              'Kategori Sebab': payload.katSebab,
+              'Sumber Sebab': payload.sumber,
+              'Sifat Kendali (C/UC)': payload.control,
+              'Uraian Dampak': payload.dampak,
+              'Pihak Terkena Dampak': payload.pihakDampak
+            };
+            database['F2b_Identifikasi_Operasional'].push(convertedObj);
+          } else if (code === 'F3a') {
+            convertedObj = {
+              'Kode Risiko': payload.kode,
+              'Pernyataan Risiko': payload.risiko,
+              'Kategori': payload.kategori,
+              'Kemungkinan (Inheren)': payload.prob,
+              'Dampak (Inheren)': payload.damp,
+              'Skor (Inheren)': payload.skor,
+              'Tingkat (Inheren)': payload.tingkat
+            };
+            database['F3a_Inheren'].push(convertedObj);
+          } else if (code === 'F3b') {
+            convertedObj = {
+              'Kode Risiko': payload.kode,
+              'Pernyataan Risiko': payload.risiko,
+              'Kategori': payload.kategori,
+              'Kemungkinan (Residual)': payload.prob,
+              'Dampak (Residual)': payload.damp,
+              'Skor (Residual)': payload.skor,
+              'Tingkat (Residual)': payload.tingkat
+            };
+            database['F3b_Residual'].push(convertedObj);
+          } else if (code === 'F4') {
+            convertedObj = {
+              'Kode Risiko': payload.kode,
+              'Pernyataan Risiko': payload.risiko,
+              'Skor Inheren': payload.iSkor,
+              'Pengendalian yang Sudah Ada': payload.pUraian,
+              'Celah Pengendalian': payload.pCelah,
+              'Efektivitas Kontrol (Memadai/Belum)': payload.pEfektif,
+              'Skor Residual': payload.rSkor,
+              'Respon Risiko': payload.respon,
+              'Keterangan': payload.keterangan
+            };
+            database['F4_Analisis_Prioritas'].push(convertedObj);
+          } else if (code === 'F6') {
+            convertedObj = {
+              'Kode Risiko': payload.kode,
+              'Uraian Risiko': payload.risiko,
+              'Uraian Pengendalian Existing': payload.existingControl,
+              'Celah Pengendalian': payload.celah,
+              'Skor Residual': payload.rSkor,
+              'Rencana Tindak Pengendalian': payload.rtp,
+              'Target_Kemungkinan': payload.tProb,
+              'Target_Dampak': payload.tDamp,
+              'Target_Skor': payload.tSkor,
+              'Target_Tingkat': payload.tTingkat,
+              'Pemilik/Penanggung Jawab': payload.pj,
+              'Target Waktu': payload.waktu
+            };
+            database['F6_RTP'].push(convertedObj);
+          } else if (code === 'F7') {
+            convertedObj = {
+              'Kode Risiko': payload.kode,
+              'Pernyataan Risiko': payload.risiko,
+              'Kegiatan Pengendalian': payload.kegiatan,
+              'Media/Bentuk Sarana': payload.media,
+              'Penyedia Informasi': payload.penyedia,
+              'Penerima Informasi': payload.penerima,
+              'Rencana Waktu Pelaksanaan': payload.rWaktu,
+              'Realisasi Waktu Pelaksanaan': payload.realWaktu,
+              'Keterangan': payload.ket
+            };
+            database['F7_Infokom'].push(convertedObj);
+          } else if (code === 'F8') {
+            convertedObj = {
+              'Kode Risiko': payload.kode,
+              'Kegiatan Pengendalian': payload.kegiatan,
+              'Bentuk/Metode Pemantauan': payload.metode,
+              'Penanggung Jawab Pemantauan': payload.pj,
+              'Rencana Waktu Pelaksanaan': payload.rWaktu,
+              'Realisasi Waktu Pelaksanaan': payload.realWaktu,
+              'Keterangan': payload.ket
+            };
+            database['F8_Monitoring_PI'].push(convertedObj);
+          } else if (code === 'F9') {
+            convertedObj = {
+              'Kode Risiko': payload.kode,
+              'Pernyataan Risiko': payload.risiko,
+              'Kejadian_Tanggal': payload.tgl,
+              'Kejadian_Sebab': payload.sebab,
+              'Kejadian_Dampak': payload.dampak,
+              'Kejadian_Keterangan': payload.ket,
+              'Rencana_RTP': payload.rencanaRtp,
+              'Realisasi_RTP': payload.realisasiRtp,
+              'Keterangan_Realisasi': payload.ketReal
+            };
+            database['F9_Monitor_Kejadian'].push(convertedObj);
+          }
+
+          showToast('PREVIEW MODE: Data sukses disimpan sementara di browser!');
+          document.getElementById(`${code.toLowerCase()}Form`).reset();
+          resetSubmitBtn(btn, code);
+          loadDatabase();
+        }, 600);
+      }
+    }
+
+    function resetSubmitBtn(btn, code) {
+      btn.disabled = false;
+      btn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> Simpan Form ${code}`;
+      lucide.createIcons();
+    }
+
+    // Sync Database
+    function loadDatabase() {
+      if (typeof google !== 'undefined' && google.script) {
+        google.script.run
+          .withSuccessHandler(function(data) {
+            database = data;
+            renderDashboardData();
+          })
+          .getAllData();
+      } else {
+        renderDashboardData();
+      }
+    }
+
+    // Render Dashboard & Matriks
+    function renderDashboardData() {
+      const f2a = database['F2a_Identifikasi_Strategis'] || [];
+      const f2b = database['F2b_Identifikasi_Operasional'] || [];
+      const totalRisiko = f2a.length + f2b.length;
+
+      const f3a = database['F3a_Inheren'] || [];
+      const f3b = database['F3b_Residual'] || [];
+      const viewType = document.getElementById('peta-view-type').value;
+      const targetList = viewType === 'inheren' ? f3a : f3b;
+
+      // Card Stats
+      document.getElementById('stat-total').innerText = totalRisiko;
+      document.getElementById('stat-tinggi').innerText = targetList.filter(i => (i['Skor (Residual)'] || i['Skor (Inheren)']) >= 15).length;
+      document.getElementById('stat-sedang').innerText = targetList.filter(i => {
+        const s = (i['Skor (Residual)'] || i['Skor (Inheren)']);
+        return s >= 5 && s < 15;
+      }).length;
+      document.getElementById('stat-rendah').innerText = targetList.filter(i => {
+        const s = (i['Skor (Residual)'] || i['Skor (Inheren)']);
+        return s < 5 && s > 0;
+      }).length;
+
+      // Matriks 5x5 Form 5
+      const matrix = document.getElementById('matrix-grid');
+      matrix.innerHTML = '';
+      
+      for (let y = 5; y >= 1; y--) {
+        for (let x = 1; x <= 5; x++) {
+          const skor = x * y;
+          const bg = getColorClass(skor);
+          
+          const matchingRisks = targetList.filter(i => {
+            const px = parseInt(i['Kemungkinan (Residual)'] || i['Kemungkinan (Inheren)']);
+            const dx = parseInt(i['Dampak (Residual)'] || i['Dampak (Inheren)']);
+            return px === y && dx === x;
+          });
+
+          const div = document.createElement('div');
+          div.className = `w-full h-full ${bg} border border-slate-700 rounded flex items-center justify-center font-bold text-xs relative group transition-transform hover:scale-105 cursor-pointer`;
+          
+          if (matchingRisks.length > 0) {
+            div.innerHTML = `<span class="bg-white text-slate-900 rounded-full w-5 h-5 flex items-center justify-center shadow-lg">${matchingRisks.length}</span>`;
+            
+            const popover = document.createElement('div');
+            popover.className = 'absolute hidden group-hover:block bg-slate-900 text-white text-[10px] p-2.5 rounded-lg border border-slate-700 w-48 -top-12 z-50 left-1/2 transform -translate-x-1/2 shadow-2xl';
+            let list = '';
+            matchingRisks.forEach(r => list += `• ${r['Kode Risiko']}\n`);
+            popover.innerText = list;
+            div.appendChild(popover);
+          } else {
+            div.innerHTML = `<span class="opacity-20">${skor}</span>`;
+          }
+          matrix.appendChild(div);
+        }
+      }
+
+      // Master Register Table (Form Induk)
+      const body = document.getElementById('mainRegisterBody');
+      body.innerHTML = '';
+
+      const combined = [...f2a, ...f2b];
+      if (combined.length === 0) {
+        body.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500 italic">Belum ada risiko teridentifikasi. Mulailah mengisi Form 2a / 2b.</td></tr>';
+        return;
+      }
+
+      combined.forEach((item, index) => {
+        const rInheren = f3a.find(a => a['Kode Risiko'] === item['Kode Risiko']) || {};
+        const rResidual = f3b.find(b => b['Kode Risiko'] === item['Kode Risiko']) || {};
+        const rRtp = database['F6_RTP'].find(c => c['Kode Risiko'] === item['Kode Risiko']) || {};
+
+        const iSkor = rInheren['Skor (Inheren)'] || '-';
+        const rSkor = rResidual['Skor (Residual)'] || '-';
+        const tSkor = rRtp['Target_Skor'] || '-';
+
+        const iColor = iSkor !== '-' ? getColorClass(iSkor) : 'bg-slate-700';
+        const rColor = rSkor !== '-' ? getColorClass(rSkor) : 'bg-slate-700';
+        const tColor = tSkor !== '-' ? getColorClass(tSkor) : 'bg-slate-700';
+
+        body.innerHTML += `
+          <tr class="hover:bg-slate-850 border-b border-slate-700/50 transition-colors">
+            <td class="p-2.5 text-slate-400 font-mono">${index + 1}</td>
+            <td class="p-2.5 font-bold text-blue-400 font-mono">${item['Kode Risiko']}</td>
+            <td class="p-2.5 max-w-xs truncate">${item['Pernyataan Risiko'] || '-'}</td>
+            <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-semibold ${iColor}">Skor: ${iSkor}</span></td>
+            <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-semibold ${rColor}">Skor: ${rSkor}</span></td>
+            <td class="p-2.5 text-center text-slate-400 max-w-xxs truncate">${rRtp['Rencana Tindak Pengendalian'] || '-'}</td>
+            <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-semibold ${tColor}">Skor: ${tSkor}</span></td>
+          </tr>
+        `;
+      });
+    }
+
+    // Modal Control Panels
+    function openExportModal() { togglePrintSelector(true); }
+    function togglePrintSelector(show) {
+      const modal = document.getElementById('print-sheet-selector');
+      if (show) modal.classList.remove('hidden');
+      else modal.classList.add('hidden');
+    }
+
+    // Menampilkan & Sembunyikan Modal Analisis AI
+    function openAIModal() {
+      toggleAIModal(true);
+      document.getElementById('ai-state-ready').classList.remove('hidden');
+      document.getElementById('ai-state-loading').classList.add('hidden');
+      document.getElementById('ai-state-result').classList.add('hidden');
+    }
+    function toggleAIModal(show) {
+      const modal = document.getElementById('ai-analysis-modal');
+      if (show) modal.classList.remove('hidden');
+      else modal.classList.add('hidden');
+    }
+
+    // Clean Markdown Translator
+    function markdownToHtml(text) {
+      let html = text;
+      html = html.replace(/^### (.*$)/gim, '<h5 class="text-sm font-bold text-violet-400 mt-4 mb-2">$1</h5>');
+      html = html.replace(/^## (.*$)/gim, '<h4 class="text-base font-extrabold text-white mt-5 mb-3 border-b border-slate-800 pb-1.5 flex items-center gap-2"><span class="w-1.5 h-4 bg-violet-500 rounded-sm"></span>$1</h4>');
+      html = html.replace(/^# (.*$)/gim, '<h3 class="text-lg font-black text-white mt-6 mb-4">$1</h3>');
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>');
+      html = html.replace(/^\s*-\s*(.*$)/gim, '<div class="flex items-start gap-2 ml-4 my-1.5 text-slate-300"><span class="text-violet-500 mt-1 shrink-0">•</span><span>$1</span></div>');
+      html = html.replace(/^\s*\*\s*(.*$)/gim, '<div class="flex items-start gap-2 ml-4 my-1.5 text-slate-300"><span class="text-violet-500 mt-1 shrink-0">•</span><span>$1</span></div>');
+      html = html.replace(/^\s*(\d+)\.\s*(.*$)/gim, '<div class="flex items-start gap-2 ml-4 my-1.5 text-slate-300"><span class="font-bold text-violet-400 shrink-0">$1.</span><span>$2</span></div>');
+      html = html.replace(/^---$/gim, '<hr class="border-slate-800 my-4" />');
+
+      html = html.split('\n\n').map(p => {
+        if (!p.trim().startsWith('<div') && !p.trim().startsWith('<h') && !p.trim().startsWith('<hr')) {
+          return `<p class="mb-3 text-slate-300 text-xs leading-relaxed">${p.trim()}</p>`;
+        }
+        return p;
+      }).join('\n');
+
+      return html;
+    }
+
+    // AI Analysis via Gemini
+    async function executeAIAnalysis() {
+      const readyState = document.getElementById('ai-state-ready');
+      const loadingState = document.getElementById('ai-state-loading');
+      const resultState = document.getElementById('ai-state-result');
+
+      readyState.classList.add('hidden');
+      loadingState.classList.remove('hidden');
+
+      const loaderTitle = document.getElementById('ai-loading-title');
+      loaderTitle.innerText = "Membaca Kertas Kerja...";
+
+      const stratCount = database['F2a_Identifikasi_Strategis']?.length || 0;
+      const operCount = database['F2b_Identifikasi_Operasional']?.length || 0;
+
+      if (stratCount + operCount === 0) {
+        loadingState.classList.add('hidden');
+        readyState.classList.remove('hidden');
+        showToast('Gagal: Masukkan minimal 1 data identifikasi risiko pada Form 2a atau 2b!', 'error');
+        return;
+      }
+
+      const systemPrompt = `
+        Anda adalah Konsultan Manajemen Risiko Senior dengan spesialisasi Sektor Publik Sektor Pemerintahan (SPIP, ISO 31000) untuk Dinas Pertanian dan Ketahanan Pangan (DPKP) Kabupaten Buol.
+        Berikan laporan analisis profesional, mendalam, dan taktis dalam Bahasa Indonesia.
+        
+        Patuhi struktur laporan berikut:
+        ## 1. PENILAIAN PROFIL & PETA SEBARAN RISIKO
+        (Evaluasi sebaran matriks peta risiko 5x5, tingkat risiko Tinggi, Sedang, Rendah).
+        
+        ## 2. EVALUASI EFEKTIVITAS PENGENDALIAN LINGKUNGAN (CEE)
+        (Analisis kualitas CEE Form 1a dan Form 1b).
+        
+        ## 3. REKOMENDASI MITIGASI UNTUK PEMILIK RISIKO
+        (Rekomendasi taktis per Jabatan Pemilik Risiko dalam data).
+      `;
+
+      const serializedData = JSON.stringify(database, null, 2);
+      const userPrompt = `
+        Berikut adalah isi database Kertas Kerja DPKP Kabupaten Buol saat ini:
+        ${serializedData}
+        Tolong lakukan analisis menyeluruh dan berikan rekomendasi profesional.
+      `;
+
+      const apiKey = "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+      const payload = {
+        contents: [{ parts: [{ text: userPrompt }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] }
+      };
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          const resData = await response.json();
+          const textResponse = resData?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (textResponse) {
+            document.getElementById('ai-response-rendered').innerHTML = markdownToHtml(textResponse);
+            loadingState.classList.add('hidden');
+            resultState.classList.remove('hidden');
+            lucide.createIcons();
+            showToast('Analisis Risiko AI berhasil dirumuskan!', 'success');
+          }
+        } else {
+          throw new Error('API Error');
+        }
+      } catch (err) {
+        loadingState.classList.add('hidden');
+        readyState.classList.remove('hidden');
+        showToast('Koneksi ke Gemini AI gagal. Silakan coba beberapa saat lagi.', 'error');
+      }
+    }
+
+    function copyAIResult() {
+      const container = document.getElementById('ai-response-rendered');
+      const plainText = container.innerText;
+      
+      const el = document.createElement('textarea');
+      el.value = plainText;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+
+      const copyIcon = document.getElementById('ai-copy-icon');
+      const copyText = document.getElementById('ai-copy-text');
+
+      copyIcon.setAttribute('data-lucide', 'check');
+      copyText.innerText = "Tersalin!";
+      lucide.createIcons();
+
+      setTimeout(() => {
+        copyIcon.setAttribute('data-lucide', 'copy');
+        copyText.innerText = "Salin Teks";
+        lucide.createIcons();
+      }, 2000);
+
+      showToast('Hasil analisis disalin ke clipboard!', 'success');
+    }
+
+    function exportAIResultToWord() {
+      const content = document.getElementById('ai-response-rendered').innerHTML;
+      const headerInstansi = `
+        <div style="text-align: center; font-family: 'Arial', sans-serif; margin-bottom: 25px; border-bottom: 3px double black; padding-bottom: 10px;">
+          <h2 style="margin: 2px 0; font-size: 13pt; text-transform: uppercase;">PEMERINTAH KABUPATEN BUOL</h2>
+          <h1 style="margin: 2px 0; font-size: 15pt; text-transform: uppercase; font-weight: bold;">DINAS PERTANIAN DAN KETAHANAN PANGAN</h1>
+          <p style="margin: 2px 0; font-size: 10pt; color: #333333; font-style: italic;">Laporan Lanjutan Analisis Risiko & Rekomendasi Mitigasi AI</p>
+        </div>
+      `;
+
+      let wordContent = content
+        .replaceAll('text-white', '')
+        .replaceAll('text-slate-300', '')
+        .replaceAll('text-violet-400', 'color: #7c3aed; font-weight: bold;');
+
+      const completeDocHtml = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: 'Arial', sans-serif; font-size: 11pt; line-height: 1.5; color: #000000; }
+            h3 { font-size: 14pt; font-weight: bold; margin-top: 18pt; margin-bottom: 6pt; color: #1e3a8a; }
+            h4 { font-size: 12pt; font-weight: bold; margin-top: 14pt; margin-bottom: 4pt; color: #4c1d95; border-bottom: 1px solid #ddd; padding-bottom: 2px; }
+            p { margin-bottom: 10pt; text-align: justify; }
+          </style>
+        </head>
+        <body>
+          ${headerInstansi}
+          <div>${wordContent}</div>
+        </body>
+        </html>
+      `;
+
+      try {
+        const blob = new Blob(['\ufeff' + completeDocHtml], { type: 'application/msword;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Laporan_Rekomendasi_AI_DPKP.doc`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast('Hasil analisis diekspor ke dokumen Word!', 'success');
+      } catch (err) {
+        showToast('Gagal mengekspor dokumen Word: ' + err.message, 'error');
+      }
+    }
+
+    // Dynamic Excel Content Generator per Form
+    function generateHTMLContent(formName) {
+      const headerInstansi = `
+        <div style="text-align: center; font-family: sans-serif; margin-bottom: 20px;">
+          <h2 style="margin: 2px 0; font-size: 14px; text-transform: uppercase;">PEMERINTAH KABUPATEN BUOL</h2>
+          <h1 style="margin: 2px 0; font-size: 16px; text-transform: uppercase;">DINAS PERTANIAN DAN KETAHANAN PANGAN</h1>
+          <hr style="border: 0; border-top: 2px double #000; margin-top: 8px;" />
+        </div>
+      `;
+
+      let tableHTML = '';
+
+      if (formName === 'F1a') {
+        const data = database['F1a_Konteks_Strategis'] || [];
+        tableHTML = `
+          ${headerInstansi}
+          <div style="text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 15px;">PENETAPAN KONTEKS STRATEGIS OPD (FORM 1a)</div>
+          <table border="1" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 10px;">
+            <tr style="background-color: #f3f4f6;">
+              <th style="padding: 6px;">No</th>
+              <th style="padding: 6px;">Nama Pemda</th>
+              <th style="padding: 6px;">Nama OPD</th>
+              <th style="padding: 6px;">Tahun Penilaian</th>
+              <th style="padding: 6px;">Periode Renstra</th>
+              <th style="padding: 6px;">Urusan Pemerintahan</th>
+              <th style="padding: 6px;">Nama Tujuan/Sasaran</th>
+              <th style="padding: 6px;">Sasaran Strategis</th>
+              <th style="padding: 6px;">Indikator Sasaran</th>
+              <th style="padding: 6px;">Target Indikator</th>
+            </tr>
+            ${data.length === 0 ? '<tr><td colspan="10" style="text-align:center; padding: 10px;">Tidak ada data</td></tr>' : data.map((row, i) => `
+              <tr>
+                <td style="padding: 6px; text-align: center;">${i+1}</td>
+                <td style="padding: 6px;">${row['Nama Pemda'] || '-'}</td>
+                <td style="padding: 6px;">${row['Nama OPD'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Tahun Penilaian'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Periode Renstra'] || '-'}</td>
+                <td style="padding: 6px;">${row['Urusan Pemerintahan'] || '-'}</td>
+                <td style="padding: 6px;">${row['Nama Tujuan/Sasaran'] || '-'}</td>
+                <td style="padding: 6px;">${row['Sasaran Strategis'] || '-'}</td>
+                <td style="padding: 6px;">${row['Indikator Sasaran'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Target Indikator'] || '-'}</td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+      }
+      else if (formName === 'F1b') {
+        const data = database['F1b_Konteks_Operasional'] || [];
+        tableHTML = `
+          ${headerInstansi}
+          <div style="text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 15px;">PENETAPAN KONTEKS OPERASIONAL OPD (FORM 1b)</div>
+          <table border="1" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 10px;">
+            <tr style="background-color: #f3f4f6;">
+              <th style="padding: 6px;">No</th>
+              <th style="padding: 6px;">Nama Pemda</th>
+              <th style="padding: 6px;">Nama OPD</th>
+              <th style="padding: 6px;">Tahun Penilaian</th>
+              <th style="padding: 6px;">Periode Renstra</th>
+              <th style="padding: 6px;">Urusan Pemerintahan</th>
+              <th style="padding: 6px;">Nama Program</th>
+              <th style="padding: 6px;">Nama Kegiatan</th>
+              <th style="padding: 6px;">Tujuan Kegiatan</th>
+              <th style="padding: 6px;">Indikator Keluaran</th>
+              <th style="padding: 6px;">Tahap Utama Proses</th>
+            </tr>
+            ${data.length === 0 ? '<tr><td colspan="11" style="text-align:center; padding: 10px;">Tidak ada data</td></tr>' : data.map((row, i) => `
+              <tr>
+                <td style="padding: 6px; text-align: center;">${i+1}</td>
+                <td style="padding: 6px;">${row['Nama Pemda'] || '-'}</td>
+                <td style="padding: 6px;">${row['Nama OPD'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Tahun Penilaian'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Periode Renstra'] || '-'}</td>
+                <td style="padding: 6px;">${row['Urusan Pemerintahan'] || '-'}</td>
+                <td style="padding: 6px;">${row['Nama Program'] || '-'}</td>
+                <td style="padding: 6px;">${row['Nama Kegiatan'] || '-'}</td>
+                <td style="padding: 6px;">${row['Tujuan Kegiatan'] || '-'}</td>
+                <td style="padding: 6px;">${row['Indikator Keluaran'] || '-'}</td>
+                <td style="padding: 6px;">${row['Tahap Utama Proses'] || '-'}</td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+      }
+      else if (formName === 'F2a') {
+        const data = database['F2a_Identifikasi_Strategis'] || [];
+        tableHTML = `
+          ${headerInstansi}
+          <div style="text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 15px;">KERTAS KERJA IDENTIFIKASI RISIKO STRATEGIS (FORM 2a)</div>
+          <table border="1" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 10px;">
+            <tr style="background-color: #f3f4f6;">
+              <th style="padding: 6px;">No</th>
+              <th style="padding: 6px;">Kode</th>
+              <th style="padding: 6px;">Nama Tujuan/Sasaran</th>
+              <th style="padding: 6px;">Sasaran Strategis</th>
+              <th style="padding: 6px;">Indikator Sasaran</th>
+              <th style="padding: 6px;">Pernyataan Risiko</th>
+              <th style="padding: 6px;">Pemilik Risiko</th>
+              <th style="padding: 6px;">Penyebab (Uraian)</th>
+              <th style="padding: 6px;">Kategori</th>
+              <th style="padding: 6px;">Sifat (C/UC)</th>
+              <th style="padding: 6px;">Uraian Dampak</th>
+              <th style="padding: 6px;">Pihak Terkena</th>
+            </tr>
+            ${data.length === 0 ? '<tr><td colspan="12" style="text-align:center; padding: 10px;">Tidak ada data</td></tr>' : data.map((row, i) => `
+              <tr>
+                <td style="padding: 6px; text-align: center;">${i+1}</td>
+                <td style="padding: 6px; font-weight: bold; text-align: center;">${row['Kode Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Nama Tujuan/Sasaran'] || '-'}</td>
+                <td style="padding: 6px;">${row['Sasaran Strategis'] || '-'}</td>
+                <td style="padding: 6px;">${row['Indikator Sasaran'] || '-'}</td>
+                <td style="padding: 6px; font-weight: bold;">${row['Pernyataan Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Pemilik Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Penyebab (Uraian)'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Kategori Sebab'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Sifat Kendali (C/UC)'] || '-'}</td>
+                <td style="padding: 6px;">${row['Uraian Dampak'] || '-'}</td>
+                <td style="padding: 6px;">${row['Pihak Terkena Dampak'] || '-'}</td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+      }
+      else if (formName === 'F2b') {
+        const data = database['F2b_Identifikasi_Operasional'] || [];
+        tableHTML = `
+          ${headerInstansi}
+          <div style="text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 15px;">KERTAS KERJA IDENTIFIKASI RISIKO OPERASIONAL (FORM 2b)</div>
+          <table border="1" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 10px;">
+            <tr style="background-color: #f3f4f6;">
+              <th style="padding: 6px;">No</th>
+              <th style="padding: 6px;">Kode</th>
+              <th style="padding: 6px;">Nama Program</th>
+              <th style="padding: 6px;">Nama Kegiatan</th>
+              <th style="padding: 6px;">Tujuan Kegiatan</th>
+              <th style="padding: 6px;">Tahap Utama Proses</th>
+              <th style="padding: 6px;">Pernyataan Risiko</th>
+              <th style="padding: 6px;">Pemilik Risiko</th>
+              <th style="padding: 6px;">Penyebab (Uraian)</th>
+              <th style="padding: 6px;">Sifat (C/UC)</th>
+              <th style="padding: 6px;">Uraian Dampak</th>
+            </tr>
+            ${data.length === 0 ? '<tr><td colspan="11" style="text-align:center; padding: 10px;">Tidak ada data</td></tr>' : data.map((row, i) => `
+              <tr>
+                <td style="padding: 6px; text-align: center;">${i+1}</td>
+                <td style="padding: 6px; font-weight: bold; text-align: center;">${row['Kode Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Nama Program'] || '-'}</td>
+                <td style="padding: 6px;">${row['Nama Kegiatan'] || '-'}</td>
+                <td style="padding: 6px;">${row['Tujuan Kegiatan'] || '-'}</td>
+                <td style="padding: 6px;">${row['Tahap Utama Proses'] || '-'}</td>
+                <td style="padding: 6px; font-weight: bold;">${row['Pernyataan Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Pemilik Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Penyebab (Uraian)'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Sifat Kendali (C/UC)'] || '-'}</td>
+                <td style="padding: 6px;">${row['Uraian Dampak'] || '-'}</td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+      }
+      else if (formName === 'F3a') {
+        const data = database['F3a_Inheren'] || [];
+        tableHTML = `
+          ${headerInstansi}
+          <div style="text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 15px;">PENGUKURAN RISIKO INHEREN SEBELUM MITIGASI (FORM 3a)</div>
+          <table border="1" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 10px;">
+            <tr style="background-color: #f3f4f6;">
+              <th style="padding: 6px;">No</th>
+              <th style="padding: 6px;">Kode Risiko</th>
+              <th style="padding: 6px;">Pernyataan Risiko</th>
+              <th style="padding: 6px;">Kategori</th>
+              <th style="padding: 6px; text-align: center;">Kemungkinan (Inheren)</th>
+              <th style="padding: 6px; text-align: center;">Dampak (Inheren)</th>
+              <th style="padding: 6px; text-align: center;">Skor (Inheren)</th>
+              <th style="padding: 6px; text-align: center;">Tingkat</th>
+            </tr>
+            ${data.length === 0 ? '<tr><td colspan="8" style="text-align:center; padding: 10px;">Tidak ada data</td></tr>' : data.map((row, i) => `
+              <tr>
+                <td style="padding: 6px; text-align: center;">${i+1}</td>
+                <td style="padding: 6px; text-align: center; font-weight: bold;">${row['Kode Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Pernyataan Risiko'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Kategori'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Kemungkinan (Inheren)'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Dampak (Inheren)'] || '-'}</td>
+                <td style="padding: 6px; text-align: center; font-weight: bold;">${row['Skor (Inheren)'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Tingkat (Inheren)'] || '-'}</td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+      }
+      else if (formName === 'F3b') {
+        const data = database['F3b_Residual'] || [];
+        tableHTML = `
+          ${headerInstansi}
+          <div style="text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 15px;">PENGUKURAN RISIKO RESIDUAL SESUDAH MITIGASI (FORM 3b)</div>
+          <table border="1" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 10px;">
+            <tr style="background-color: #f3f4f6;">
+              <th style="padding: 6px;">No</th>
+              <th style="padding: 6px;">Kode Risiko</th>
+              <th style="padding: 6px;">Pernyataan Risiko</th>
+              <th style="padding: 6px;">Kategori</th>
+              <th style="padding: 6px; text-align: center;">Kemungkinan (Residual)</th>
+              <th style="padding: 6px; text-align: center;">Dampak (Residual)</th>
+              <th style="padding: 6px; text-align: center;">Skor (Residual)</th>
+              <th style="padding: 6px; text-align: center;">Tingkat</th>
+            </tr>
+            ${data.length === 0 ? '<tr><td colspan="8" style="text-align:center; padding: 10px;">Tidak ada data</td></tr>' : data.map((row, i) => `
+              <tr>
+                <td style="padding: 6px; text-align: center;">${i+1}</td>
+                <td style="padding: 6px; text-align: center; font-weight: bold;">${row['Kode Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Pernyataan Risiko'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Kategori'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Kemungkinan (Residual)'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Dampak (Residual)'] || '-'}</td>
+                <td style="padding: 6px; text-align: center; font-weight: bold;">${row['Skor (Residual)'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Tingkat (Residual)'] || '-'}</td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+      }
+      else if (formName === 'F4') {
+        const data = database['F4_Analisis_Prioritas'] || [];
+        tableHTML = `
+          ${headerInstansi}
+          <div style="text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 15px;">KERTAS KERJA EVALUASI PENGENDALIAN EXISTING (FORM 4)</div>
+          <table border="1" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 10px;">
+            <tr style="background-color: #f3f4f6;">
+              <th style="padding: 6px;">No</th>
+              <th style="padding: 6px;">Kode</th>
+              <th style="padding: 6px;">Pernyataan Risiko</th>
+              <th style="padding: 6px; text-align: center;">Skor Inheren</th>
+              <th style="padding: 6px;">Pengendalian yang Sudah Ada</th>
+              <th style="padding: 6px;">Celah Pengendalian</th>
+              <th style="padding: 6px; text-align: center;">Efektivitas Kontrol</th>
+              <th style="padding: 6px; text-align: center;">Skor Residual</th>
+              <th style="padding: 6px;">Respon Risiko</th>
+            </tr>
+            ${data.length === 0 ? '<tr><td colspan="9" style="text-align:center; padding: 10px;">Tidak ada data</td></tr>' : data.map((row, i) => `
+              <tr>
+                <td style="padding: 6px; text-align: center;">${i+1}</td>
+                <td style="padding: 6px; text-align: center; font-weight: bold;">${row['Kode Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Pernyataan Risiko'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Skor Inheren'] || '-'}</td>
+                <td style="padding: 6px;">${row['Pengendalian yang Sudah Ada'] || '-'}</td>
+                <td style="padding: 6px;">${row['Celah Pengendalian'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Efektivitas Kontrol (Memadai/Belum)'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Skor Residual'] || '-'}</td>
+                <td style="padding: 6px;">${row['Respon Risiko'] || '-'}</td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+      }
+      else if (formName === 'F6') {
+        const data = database['F6_RTP'] || [];
+        tableHTML = `
+          ${headerInstansi}
+          <div style="text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 15px;">RENCANA TINDAK PENGENDALIAN (RTP - FORM 6)</div>
+          <table border="1" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 10px;">
+            <tr style="background-color: #f3f4f6;">
+              <th style="padding: 6px;">No</th>
+              <th style="padding: 6px;">Kode</th>
+              <th style="padding: 6px;">Risiko</th>
+              <th style="padding: 6px; text-align: center;">Skor Residual</th>
+              <th style="padding: 6px;">Rencana RTP Baru</th>
+              <th style="padding: 6px; text-align: center;">Target Skor</th>
+              <th style="padding: 6px; text-align: center;">Target Tingkat</th>
+              <th style="padding: 6px;">Penanggung Jawab</th>
+              <th style="padding: 6px;">Target Waktu</th>
+            </tr>
+            ${data.length === 0 ? '<tr><td colspan="9" style="text-align:center; padding: 10px;">Tidak ada data</td></tr>' : data.map((row, i) => `
+              <tr>
+                <td style="padding: 6px; text-align: center;">${i+1}</td>
+                <td style="padding: 6px; text-align: center; font-weight: bold;">${row['Kode Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Uraian Risiko'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Skor Residual'] || '-'}</td>
+                <td style="padding: 6px; font-weight: bold;">${row['Rencana Tindak Pengendalian'] || '-'}</td>
+                <td style="padding: 6px; text-align: center; font-weight: bold;">${row['Target_Skor'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Target_Tingkat'] || '-'}</td>
+                <td style="padding: 6px;">${row['Pemilik/Penanggung Jawab'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Target Waktu'] || '-'}</td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+      }
+      else if (formName === 'F7') {
+        const data = database['F7_Infokom'] || [];
+        tableHTML = `
+          ${headerInstansi}
+          <div style="text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 15px;">RENCANA INFORMASI & KOMUNIKASI (FORM 7)</div>
+          <table border="1" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 10px;">
+            <tr style="background-color: #f3f4f6;">
+              <th style="padding: 6px;">No</th>
+              <th style="padding: 6px;">Kode</th>
+              <th style="padding: 6px;">Pernyataan Risiko</th>
+              <th style="padding: 6px;">Kegiatan Pengendalian</th>
+              <th style="padding: 6px;">Media/Bentuk Sarana</th>
+              <th style="padding: 6px;">Penyedia</th>
+              <th style="padding: 6px;">Penerima</th>
+              <th style="padding: 6px; text-align: center;">Rencana</th>
+              <th style="padding: 6px; text-align: center;">Realisasi</th>
+            </tr>
+            ${data.length === 0 ? '<tr><td colspan="9" style="text-align:center; padding: 10px;">Tidak ada data</td></tr>' : data.map((row, i) => `
+              <tr>
+                <td style="padding: 6px; text-align: center;">${i+1}</td>
+                <td style="padding: 6px; text-align: center; font-weight: bold;">${row['Kode Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Pernyataan Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Kegiatan Pengendalian'] || '-'}</td>
+                <td style="padding: 6px;">${row['Media/Bentuk Sarana'] || '-'}</td>
+                <td style="padding: 6px;">${row['Penyedia Informasi'] || '-'}</td>
+                <td style="padding: 6px;">${row['Penerima Informasi'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Rencana Waktu Pelaksanaan'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Realisasi Waktu Pelaksanaan'] || '-'}</td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+      }
+      else if (formName === 'F8') {
+        const data = database['F8_Monitoring_PI'] || [];
+        tableHTML = `
+          ${headerInstansi}
+          <div style="text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 15px;">RENCANA MONITORING PI (FORM 8)</div>
+          <table border="1" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 10px;">
+            <tr style="background-color: #f3f4f6;">
+              <th style="padding: 6px;">No</th>
+              <th style="padding: 6px;">Kode</th>
+              <th style="padding: 6px;">Kegiatan Pengendalian</th>
+              <th style="padding: 6px;">Bentuk/Metode Pemantauan</th>
+              <th style="padding: 6px;">Penanggung Jawab</th>
+              <th style="padding: 6px; text-align: center;">Rencana</th>
+              <th style="padding: 6px; text-align: center;">Realisasi</th>
+              <th style="padding: 6px;">Keterangan</th>
+            </tr>
+            ${data.length === 0 ? '<tr><td colspan="8" style="text-align:center; padding: 10px;">Tidak ada data</td></tr>' : data.map((row, i) => `
+              <tr>
+                <td style="padding: 6px; text-align: center;">${i+1}</td>
+                <td style="padding: 6px; text-align: center; font-weight: bold;">${row['Kode Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Kegiatan Pengendalian'] || '-'}</td>
+                <td style="padding: 6px;">${row['Bentuk/Metode Pemantauan'] || '-'}</td>
+                <td style="padding: 6px;">${row['Penanggung Jawab Pemantauan'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Rencana Waktu Pelaksanaan'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Realisasi Waktu Pelaksanaan'] || '-'}</td>
+                <td style="padding: 6px;">${row['Keterangan'] || '-'}</td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+      }
+      else if (formName === 'F9') {
+        const data = database['F9_Monitor_Kejadian'] || [];
+        tableHTML = `
+          ${headerInstansi}
+          <div style="text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 15px;">MONITORING KEJADIAN RISIKO & REALISASI RTP (FORM 9)</div>
+          <table border="1" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 10px;">
+            <tr style="background-color: #f3f4f6;">
+              <th rowspan="2">No</th>
+              <th rowspan="2">Kode</th>
+              <th rowspan="2">Pernyataan Risiko</th>
+              <th colspan="3">Kejadian Risiko</th>
+              <th colspan="3">Pelaksanaan RTP</th>
+            </tr>
+            <tr style="background-color: #e5e7eb;">
+              <th>Tanggal</th><th>Sebab</th><th>Dampak</th>
+              <th>Rencana RTP</th><th>Realisasi</th><th>Keterangan</th>
+            </tr>
+            ${data.length === 0 ? '<tr><td colspan="9" style="text-align:center; padding: 10px;">Tidak ada data</td></tr>' : data.map((row, i) => `
+              <tr>
+                <td style="padding: 6px; text-align: center;">${i+1}</td>
+                <td style="padding: 6px; text-align: center; font-weight: bold;">${row['Kode Risiko'] || '-'}</td>
+                <td style="padding: 6px;">${row['Pernyataan Risiko'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Kejadian_Tanggal'] || '-'}</td>
+                <td style="padding: 6px;">${row['Kejadian_Sebab'] || '-'}</td>
+                <td style="padding: 6px;">${row['Kejadian_Dampak'] || '-'}</td>
+                <td style="padding: 6px;">${row['Rencana_RTP'] || '-'}</td>
+                <td style="padding: 6px;">${row['Realisasi_RTP'] || '-'}</td>
+                <td style="padding: 6px; text-align: center;">${row['Keterangan_Realisasi'] || '-'}</td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+      }
+
+      return tableHTML;
+    }
+
+    // Export single sheet to Excel .xls directly
+    function exportExcel(formName) {
+      showToast(`Mengekspor Kertas Kerja ${formName}...`, 'success');
+      try {
+        const html = generateHTMLContent(formName);
+        const excelTemplate = `
+          <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+          <head>
+            <meta charset="UTF-8">
+            <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>${formName}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+            <style>
+              table { border-collapse: collapse; }
+              th, td { border: 1px solid #000; padding: 6px; font-family: Arial, sans-serif; font-size: 10px; }
+              th { background-color: #f3f4f6; font-weight: bold; }
+            </style>
+          </head>
+          <body>
+            ${html}
+          </body>
+          </html>
+        `;
+
+        const blob = new Blob([excelTemplate], { type: 'application/vnd.ms-excel;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        
+        a.href = url;
+        a.download = `Kertas_Kerja_DPKP_Buol_${formName}.xls`;
+        document.body.appendChild(a);
+        a.click();
+        
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 100);
+
+        showToast(`Kertas Kerja ${formName} berhasil diunduh!`, 'success');
+      } catch (err) {
+        showToast('Gagal mengekspor Excel: ' + err.message, 'error');
+      }
+    }
+
+    // Inisialisasi Database Load awal
+    loadDatabase();
+  </script>
+</body>
+</html>
